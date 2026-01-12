@@ -112,6 +112,11 @@ function updateNavItems(primaryColor, textColor, fontSize) {
 }
 
 function updateHeroSection(primaryColor) {
+  // Không áp dụng cho trang admin/station management
+  const isAdminPage = window.location.pathname.includes('/admin/') || 
+                      window.location.pathname.includes('/station/');
+  if (isAdminPage) return;
+  
   const heroSection = document.querySelector("section.rounded-2xl");
   if (heroSection) {
     heroSection.style.backgroundColor = primaryColor;

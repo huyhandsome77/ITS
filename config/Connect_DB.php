@@ -2,7 +2,8 @@
 $host = "localhost";
 $dbname = "its";
 $username = "root";
-$password = "Anhhuy1711@";
+$password = "";
+$port = 3307;
 
 try {
     $conn = new PDO(
