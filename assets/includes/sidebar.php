@@ -1,4 +1,5 @@
-<?php session_start(); ?>
+<?php require_once 'bootstrap.php';
+ ?>
 <!-- Mobile Menu Overlay -->
 <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
 
