@@ -12,8 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- STYLE -->
-    <link rel="stylesheet" href="../../../css/style.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../../css/style.css">
 </head>
 
 <?php
@@ -27,7 +28,8 @@ $baseUrl = '../../../..';
         <?php include '../../../includes/dispatcher/dispatcher_sidebar.php'; ?>
 
         <!-- CONTENT -->
-        <div id="contentWrapper" class="flex-1 flex flex-col min-h-screen transition-all duration-300">
+        <div id="contentWrapper" class="flex-1 flex flex-col min-h-screen
+                ml-64 lg:ml-72 transition-all duration-300">
 
             <!-- NAVBAR -->
             <?php include '../../../includes/navbar.php'; ?>
@@ -37,42 +39,123 @@ $baseUrl = '../../../..';
 
                 <!-- ===== HEADER ===== -->
                 <div class="mb-8 animate-fadeInUp">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-2" style="color:var(--primary-color)">
+                    <h1 class="text-2xl font-bold text-slate-800">
                         🚦 Điều tiết lưu lượng xe
-                    </h2>
-                    <p class="text-gray-600 text-base md:text-lg">
+                    </h1>
+
+                    <p class="text-sm text-slate-500 mt-1">
                         Theo dõi số lượng xe tại các trạm và điều phối hợp lý
                     </p>
                 </div>
 
                 <!-- ===== DASHBOARD OVERVIEW ===== -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fadeInUp">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 animate-fadeInUp">
 
-                    <div class="bg-white rounded-xl shadow-lg p-6 border-l-4" style="border-color:var(--primary-color)">
-                        <p class="text-gray-500 text-sm mb-1">Tổng số trạm</p>
-                        <p class="text-3xl font-bold" style="color:var(--primary-color)">3</p>
+                    <!-- ===== TOTAL STATIONS ===== -->
+                    <div
+                        class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 relative overflow-hidden">
+
+                        <!-- Accent line -->
+                        <div class="absolute inset-x-0 top-0 h-1 bg-green-500"></div>
+
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">
+                                    Tổng số trạm
+                                </p>
+                                <p class="text-4xl font-extrabold text-green-600">
+                                    3
+                                </p>
+                            </div>
+
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center
+                    bg-green-50 text-green-600 text-xl shadow-sm">
+                                🏢
+                            </div>
+                        </div>
+
+                        <a href="station_detail.php" class="inline-flex items-center gap-2 text-sm font-semibold
+               text-green-600 group-hover:underline transition">
+                            Xem chi tiết
+                            <span class="group-hover:translate-x-1 transition">→</span>
+                        </a>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
-                        <p class="text-gray-500 text-sm mb-1">Trạm thiếu xe</p>
-                        <p class="text-3xl font-bold text-red-600">1</p>
+
+                    <!-- ===== LOW VEHICLE ===== -->
+                    <div
+                        class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 relative overflow-hidden">
+
+                        <div class="absolute inset-x-0 top-0 h-1 bg-red-500"></div>
+
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">
+                                    Trạm thiếu xe
+                                </p>
+                                <p class="text-4xl font-extrabold text-red-600">
+                                    1
+                                </p>
+                            </div>
+
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center
+                        bg-red-50 text-red-600 text-xl shadow-sm">
+                                ⚠️
+                            </div>
+                        </div>
+
+                        <a href="station_detail.php" class="inline-flex items-center gap-2 text-sm font-semibold
+                   text-red-600 group-hover:underline transition">
+                            Xem chi tiết
+                            <span class="group-hover:translate-x-1 transition">→</span>
+                        </a>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
-                        <p class="text-gray-500 text-sm mb-1">Trạm dư xe</p>
-                        <p class="text-3xl font-bold text-yellow-600">1</p>
+                    <!-- ===== OVER VEHICLE ===== -->
+                    <div
+                        class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6 relative overflow-hidden">
+
+                        <div class="absolute inset-x-0 top-0 h-1 bg-yellow-500"></div>
+
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 mb-1">
+                                    Trạm dư xe
+                                </p>
+                                <p class="text-4xl font-extrabold text-yellow-600">
+                                    1
+                                </p>
+                            </div>
+
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center
+                        bg-yellow-50 text-yellow-600 text-xl shadow-sm">
+                                📦
+                            </div>
+                        </div>
+
+                        <a href="station_detail.php" class="inline-flex items-center gap-2 text-sm font-semibold
+                   text-yellow-600 group-hover:underline transition">
+                            Xem chi tiết
+                            <span class="group-hover:translate-x-1 transition">→</span>
+                        </a>
                     </div>
 
                 </div>
 
+
+
                 <!-- ===== TABLE STATIONS ===== -->
-                <section class="bg-white rounded-2xl shadow-lg border p-6 mb-10 animate-fadeInUp">
+                <section class="rounded-2xl shadow-lg border p-6 mb-10 animate-fadeInUp" style="
+                    background: var(--accent-gradient);
+                    color: #ffffff;
+                    border-color: var(--primary-dark);
+                ">
                     <h3 class="text-lg font-semibold mb-4">📍 Danh sách trạm</h3>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
-                                <tr class="bg-slate-100">
+                                <tr style="background-color: #ffffff; color: black;">
                                     <th class="p-4 text-left">Trạm</th>
                                     <th class="p-4 text-left">Khu vực</th>
                                     <th class="p-4 text-center">🚗 Ô tô</th>
@@ -82,7 +165,7 @@ $baseUrl = '../../../..';
                             </thead>
                             <tbody>
 
-                                <tr class="border-t hover:bg-slate-50 transition">
+                                <tr class="border-t">
                                     <td class="p-4 font-semibold">Nguyễn Huệ</td>
                                     <td class="p-4 text-gray-600">Quận 1</td>
                                     <td class="p-4 text-center font-bold">8</td>
@@ -95,7 +178,7 @@ $baseUrl = '../../../..';
                                     </td>
                                 </tr>
 
-                                <tr class="border-t hover:bg-slate-50 transition">
+                                <tr class="border-t ">
                                     <td class="p-4 font-semibold">Bến Thành</td>
                                     <td class="p-4 text-gray-600">Quận 1</td>
                                     <td class="p-4 text-center font-bold text-red-600">2</td>
@@ -108,7 +191,7 @@ $baseUrl = '../../../..';
                                     </td>
                                 </tr>
 
-                                <tr class="border-t hover:bg-slate-50 transition">
+                                <tr class="border-t">
                                     <td class="p-4 font-semibold">Quận 7</td>
                                     <td class="p-4 text-gray-600">TP.HCM</td>
                                     <td class="p-4 text-center font-bold text-yellow-600">12</td>
@@ -127,7 +210,7 @@ $baseUrl = '../../../..';
                 </section>
 
                 <!-- ===== TRAFFIC CONTROL FORM ===== -->
-                <section class="bg-white rounded-2xl shadow-lg border p-6 max-w-4xl animate-fadeInUp">
+                <section class="bg-white rounded-2xl shadow-lg border p-6 w-full animate-fadeInUp">
 
                     <h3 class="text-lg font-semibold mb-6">
                         🔁 Điều tiết xe giữa các trạm

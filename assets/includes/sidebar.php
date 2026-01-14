@@ -29,6 +29,8 @@
             </svg>
         </button>
     </div>
+    <div class="border-t border-white/20 mb-6"></div>
+
     <nav class="space-y-3">
         <a href="<?php echo isset($baseUrl) ? $baseUrl : '..'; ?>/public/index.php"
             class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-white font-medium">

@@ -67,9 +67,9 @@ $baseUrl = '../../../..';
 
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
 
-                        <input type="text" placeholder="Tên khách hàng" class="border rounded-lg px-4 py-2">
+                        <input type="text" placeholder="Tên khách hàng" class="border rounded-lg px-4 py-2 text-black">
 
-                        <select class="border rounded-lg px-4 py-2">
+                        <select class="border text-black rounded-lg px-4 py-2">
                             <option value="">Trạng thái</option>
                             <option>Chờ xử lý</option>
                             <option>Đã xác nhận</option>
@@ -77,16 +77,15 @@ $baseUrl = '../../../..';
                             <option>Đã huỷ</option>
                         </select>
 
-                        <input type="date" class="border rounded-lg px-4 py-2">
+                        <input type="date" class="border rounded-lg px-4 py-2 text-black">
 
-                        <select class="border rounded-lg px-4 py-2">
+                        <select class="border rounded-lg px-4 py-2 text-black">
                             <option>Loại xe</option>
                             <option>Ô tô</option>
                             <option>Xe máy</option>
                         </select>
 
-                        <button class="h-[42px] rounded-lg text-white font-semibold"
-                            style="background:var(--primary-color)">
+                        <button class="h-[42px] rounded-lg font-semibold bg-slate-100 text-black">
                             Lọc
                         </button>
                     </div>
@@ -150,6 +149,7 @@ $baseUrl = '../../../..';
 
         </div>
     </div>
+    <script src="../../../js/main.js"></script>
 </body>
 
 </html>

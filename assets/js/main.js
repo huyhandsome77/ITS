@@ -2,11 +2,11 @@
 // Configuration & Color Management
 // ===================================
 const defaultConfig = {
-  background_color: "#f0f9ff",
+  background_color: "#e6ffff",
   sidebar_color: "#006666",
   navbar_color: "#ffffff",
-  primary_color: "#0284c7",
-  text_color: "#0c4a6e",
+  primary_color: "#006666",
+  text_color: "#004d4d",
   app_title: "thuexe.com",
   welcome_message: "Chào mừng đến với dịch vụ cho thuê xe",
   featured_title: "Xe nổi bật",
@@ -112,6 +112,12 @@ function updateNavItems(primaryColor, textColor, fontSize) {
 }
 
 function updateHeroSection(primaryColor) {
+  // Không áp dụng cho trang admin/station management
+  const isAdminPage =
+    window.location.pathname.includes("/admin/") ||
+    window.location.pathname.includes("/station/");
+  if (isAdminPage) return;
+
   const heroSection = document.querySelector("section.rounded-2xl");
   if (heroSection) {
     heroSection.style.backgroundColor = primaryColor;

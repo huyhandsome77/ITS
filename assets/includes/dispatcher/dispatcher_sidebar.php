@@ -9,17 +9,26 @@ require_once __DIR__ . '/../bootstrap.php';?>
            overflow-y-auto transition-all duration-300" style="background: var(--sidebar-gradient);">
 
     <!-- LOGO + TITLE -->
-    <div class="flex items-center justify-between mb-8">
-        <h2 id="sidebarTitle" class="flex items-center gap-3 text-xl font-bold text-white">
+    <div class="flex items-center justify-between mb-8 lg:mb-10">
+        <h2 id="sidebarTitle"
+            class="flex items-center justify-between text-xl font-bold text-white transition-opacity duration-300">
 
-            <img src="/QuanTriMang/assets/img/Logo.png" alt="Logo" class="h-10 w-auto">
+            <img src="/QuanTriMang/assets/img/Logo.png" alt="Logo" class="h-10 w-auto ms-2">
 
-            <span>DISPATCHER</span>
+            <span class="ms-4">DISPATCHER</span>
         </h2>
 
         <!-- Mobile Close -->
-        <button id="closeSidebar" class="lg:hidden p-2 rounded-lg text-white hover:bg-white/10">
-            ✕
+        <button id="closeSidebar" class="lg:hidden p-2 rounded-lg text-white hover:bg-white hover:bg-opacity-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        <button id="toggleSidebar" class="hidden lg:block p-2 rounded-lg text-white hover:bg-white hover:bg-opacity-10">
+            <svg id="toggleIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+            </svg>
         </button>
     </div>
 
