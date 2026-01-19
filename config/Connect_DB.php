@@ -1,13 +1,13 @@
 <?php
-$host = "localhost";
+$host = "127.0.0.1";
 $dbname = "its";
 $username = "root";
 $password = "";
-$port = 3307;
+$port = "3307";
 
 try {
     $conn = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4",
         $username,
         $password,
         [

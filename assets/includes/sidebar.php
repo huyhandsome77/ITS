@@ -1,4 +1,5 @@
-<?php session_start(); ?>
+<?php require_once 'bootstrap.php';
+ ?>
 <!-- Mobile Menu Overlay -->
 <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
 
@@ -10,7 +11,7 @@
         <h2 id="sidebarTitle"
             class="flex items-center justify-between text-xl font-bold text-white transition-opacity duration-300">
 
-            <img src="/QuanTriMang/assets/img/Logo.png" alt="Logo" class="h-10 w-auto ms-4">
+            <img src="/ITS/assets/img/Logo.png" alt="Logo" class="h-10 w-auto ms-4">
 
             <span class="ms-4">MENU</span>
         </h2>
@@ -28,6 +29,8 @@
             </svg>
         </button>
     </div>
+    <div class="border-t border-white/20 mb-6"></div>
+
     <nav class="space-y-3">
         <a href="<?php echo isset($baseUrl) ? $baseUrl : '..'; ?>/public/index.php"
             class="sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-white font-medium">

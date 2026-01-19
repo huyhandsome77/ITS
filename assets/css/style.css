@@ -8,7 +8,7 @@
     #006666 50%,
     #004d4d 100%
   );
-  --primary-color: #006666;
+  --primary-color: #006666 ;
   --primary-dark: #004d4d;
   --primary-light: #008080;
   --primary-lighter: #00b3b3;

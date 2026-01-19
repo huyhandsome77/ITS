@@ -144,7 +144,7 @@
             <?php include '../../../includes/footer.php'; ?>
         </div>
     </div>
-
+    <script src="../../../js/main.js"></script>
 </body>
 
 </html>

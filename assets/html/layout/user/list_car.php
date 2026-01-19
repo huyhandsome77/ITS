@@ -33,43 +33,143 @@
                     <h2 class="text-lg font-semibold mb-4">Chọn trạm xe</h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                        <select class="border rounded-lg px-4 py-2">
+                        <select class="border rounded-lg px-4 py-2 text-black">
                             <option>Thành phố</option>
                             <option>TP.HCM</option>
                         </select>
 
-                        <select class="border rounded-lg px-4 py-2">
+                        <select class="border rounded-lg px-4 py-2 text-black">
                             <option>Quận / Huyện</option>
                             <option>Quận 1</option>
                         </select>
 
-                        <select class="border rounded-lg px-4 py-2">
+                        <select class="border rounded-lg px-4 py-2 text-black">
                             <option>Trạm xe</option>
                             <option>Nguyễn Huệ</option>
                         </select>
 
-                        <button class="h-[42px] rounded-lg text-white font-semibold"
-                            style="background:var(--primary-color)">
-                            Tìm xe
+                        <button class="h-[42px] rounded-lg text-white font-semibold bg-black"> Tìm xe
                         </button>
                     </div>
                 </section>
 
                 <!-- DANH SÁCH XE -->
-                <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-xl shadow border overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1549924231-f129b911e442"
-                            class="h-48 w-full object-cover">
+                <div
+                    class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border-l-4 border-blue-600 mb-6 mt-10 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <span class="text-xl">🚗</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800">Ô tô cho thuê</h2>
+                            <p class="text-xs text-slate-500">Đa dạng dòng xe từ 4-7 chỗ</p>
+                        </div>
+                    </div>
 
+                    <button onclick="toggleSection('oto-list', this)"
+                        class="group p-2 hover:bg-white rounded-full transition-all duration-300 shadow-sm border border-transparent hover:border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 text-slate-600 transition-transform duration-300 transform" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                <section id="oto-list"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 transition-all duration-500 ease-in-out">
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://cdn.tienphong.vn/images/7ed91798b2724a5cd2ebe0c1cd450ba858c9f0014e4529945b0303aff9259f5f93efe4f91795f6ce51f7dafb1dd4fbf696656e958f39ca2b2e5f269751c90ae0/toyota-vios-hybrid-12.jpg"
+                            class="h-48 w-full object-cover">
                         <div class="p-4">
                             <h3 class="font-semibold text-lg">Toyota Vios</h3>
                             <p class="text-sm text-slate-500 mb-2">5 chỗ • Tự động</p>
                             <p class="font-bold mb-4">600.000đ / ngày • 80.000đ / giờ</p>
-
                             <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
-                                style="background:var(--primary-color)">
-                                Đặt lịch
-                            </button>
+                                style="background:var(--primary-color)">Đặt lịch</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://imgcdn.zigwheels.vn/large/gallery/exterior/10/73/hyundai-accent-front-angle-low-view-320319.jpg"
+                            class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">Hyundai Accent</h3>
+                            <p class="text-sm text-slate-500 mb-2">5 chỗ • Tự động</p>
+                            <p class="font-bold mb-4">700.000đ / ngày • 90.000đ / giờ</p>
+                            <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
+                                style="background:var(--primary-color)">Đặt lịch</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://imgcdn.zigwheels.my/large/gallery/exterior/21/2527/mitsubishi-xpander-2024-front-angle-low-view-963711.jpg"
+                            class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">Mitsubishi Xpander</h3>
+                            <p class="text-sm text-slate-500 mb-2">7 chỗ • Tự động</p>
+                            <p class="font-bold mb-4">900.000đ / ngày • 120.000đ / giờ</p>
+                            <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
+                                style="background:var(--primary-color)">Đặt lịch</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div
+                    class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border-l-4 border-orange-500 mb-6 mt-10 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-orange-100 rounded-lg">
+                            <span class="text-xl">🛵</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800">Xe máy cho thuê</h2>
+                            <p class="text-xs text-slate-500">Xe số, tay ga & xe côn đời mới</p>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleSection('xemay-list', this)"
+                        class="group p-2 hover:bg-white rounded-full transition-all duration-300 shadow-sm border border-transparent hover:border-slate-200">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6 text-slate-600 transition-transform duration-300 transform" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+                <section id="xemay-list"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 transition-all duration-500">
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://headhongdac.com/upload/sanpham/large/vision-1742785001-fcecb0.png"
+                            class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">Honda Vision</h3>
+                            <p class="text-sm text-slate-500 mb-2">Xe tay ga • 110cc</p>
+                            <p class="font-bold mb-4">120.000đ / ngày • 20.000đ / giờ</p>
+                            <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
+                                style="background:var(--primary-color)">Đặt lịch</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://hondahungphat.com.vn/public/upload/sanpham/airblade/sp/bac-xanh-den-125.jpg"
+                            class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">Honda Air Blade 125</h3>
+                            <p class="text-sm text-slate-500 mb-2">Xe tay ga • 125cc</p>
+                            <p class="font-bold mb-4">180.000đ / ngày • 30.000đ / giờ</p>
+                            <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
+                                style="background:var(--primary-color)">Đặt lịch</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow border overflow-hidden">
+                        <img src="https://headhongdac.com/upload/sanpham/large/winner-x-1719890367-7e9456.jpg"
+                            class="h-48 w-full object-cover">
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg">Honda Winner X</h3>
+                            <p class="text-sm text-slate-500 mb-2">Xe tay côn • 150cc</p>
+                            <p class="font-bold mb-4">200.000đ / ngày • 35.000đ / giờ</p>
+                            <button onclick="openBooking()" class="w-full py-2 rounded-lg text-white font-semibold"
+                                style="background:var(--primary-color)">Đặt lịch</button>
                         </div>
                     </div>
                 </section>
@@ -197,7 +297,7 @@
 
         </div>
     </div>
-
+    <script src="../../../js/main.js"></script>
     <!-- ================= JS ================= -->
     <script>
     /* ================= CONFIG ================= */
@@ -322,6 +422,22 @@
     ].forEach(el => {
         if (el) el.addEventListener('change', calc);
     });
+
+
+    // toggle danh mục xe 
+    function toggleSection(sectionId, btn) {
+        const section = document.getElementById(sectionId);
+        const icon = btn.querySelector('svg');
+
+        // Toggle class để ẩn hiện
+        if (section.classList.contains('hidden')) {
+            section.classList.remove('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            section.classList.add('hidden');
+            icon.style.transform = 'rotate(180deg)';
+        }
+    }
     </script>
 
 

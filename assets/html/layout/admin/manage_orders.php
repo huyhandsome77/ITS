@@ -15,6 +15,12 @@
 </head>
 
 <?php $baseUrl = '../../../..'; ?>
+<?php
+include '../../../php/admin/xuly_order.php';
+
+// $orders = getAllOrders($conn);
+// $totalOrders = countOrders($conn);
+?>
 
 <body class="min-h-full font-[Inter]">
     <div id="app" class="flex min-h-screen">
@@ -37,31 +43,42 @@
 
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-blue-100 text-sm">Đơn mới</p>
-                                <h3 class="text-3xl font-bold mt-1">42</h3>
+                                <p class="text-green-100 text-sm">Tổng đơn</p>
+                                <h3 class="text-3xl font-bold mt-1">
+                                    <?= number_format($stats['total_orders'] ?? 0) ?>
+                                </h3>
+
+
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                                    <path
+                                        d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                                    <path
+                                        d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
                                 </svg>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-green-100 text-sm">Đang thuê</p>
-                                <h3 class="text-3xl font-bold mt-1">124</h3>
+                                <p class="text-blue-100 text-sm">Đơn mới</p>
+                                <h3 class="text-3xl font-bold mt-1">
+                                    <?= number_format($stats['total_new'] ?? 0) ?>
+                                </h3>
+
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
-                                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                    <path fill-rule="evenodd"
+                                        d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
@@ -71,11 +88,16 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-yellow-100 text-sm">Chờ trả xe</p>
-                                <h3 class="text-3xl font-bold mt-1">36</h3>
+                                <h3 class="text-3xl font-bold mt-1">
+                                    <?= number_format($stats['total_waiting'] ?? 0) ?>
+                                </h3>
+
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
@@ -85,11 +107,16 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-purple-100 text-sm">Hoàn thành</p>
-                                <h3 class="text-3xl font-bold mt-1">2,847</h3>
+                                <h3 class="text-3xl font-bold mt-1">
+                                    <?= number_format($stats['total_completed'] ?? 0) ?>
+                                </h3>
+
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
@@ -99,11 +126,16 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-red-100 text-sm">Đã hủy</p>
-                                <h3 class="text-3xl font-bold mt-1">58</h3>
+                                <h3 class="text-3xl font-bold mt-1">
+                                    <?= number_format($stats['total_cancelled'] ?? 0) ?>
+                                </h3>
+
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </div>
@@ -113,42 +145,59 @@
                 <!-- Filter Section -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5 mb-6">
                     <h2 class="text-lg font-semibold mb-4">Bộ lọc</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <select id="filterStation" class="border rounded-lg px-4 py-2">
+
+                    <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+
+                        <!-- Trạm -->
+                        <select name="station" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả trạm</option>
-                            <option value="1">Nguyễn Huệ - Q1</option>
-                            <option value="2">Lê Lợi - Q1</option>
-                            <option value="3">Võ Văn Tần - Q3</option>
-                            <option value="4">Hoàng Văn Thụ - Q Tân Bình</option>
+                            <?php foreach ($stations as $st): ?>
+                                <option value="<?= $st['station_id'] ?>" 
+                                    <?= ($_GET['station'] ?? '') == $st['station_id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($st['station_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
 
-                        <select id="filterStatus" class="border rounded-lg px-4 py-2">
+                        <!-- Trạng thái -->
+                        <select name="status" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="pending">Đơn mới</option>
-                            <option value="renting">Đang thuê</option>
-                            <option value="returning">Chờ trả xe</option>
-                            <option value="completed">Hoàn thành</option>
-                            <option value="cancelled">Đã hủy</option>
+                            <option value="NEW" <?= ($_GET['status'] ?? '') == 'NEW' ? 'selected' : '' ?>>Đơn mới
+                            </option>
+                            <option value="RENTING" <?= ($_GET['status'] ?? '') == 'RENTING' ? 'selected' : '' ?>>Đang
+                                thuê</option>
+                            <option value="WAITING_RETURN"
+                                <?= ($_GET['status'] ?? '') == 'WAITING_RETURN' ? 'selected' : '' ?>>Chờ trả xe</option>
+                            <option value="COMPLETED" <?= ($_GET['status'] ?? '') == 'COMPLETED' ? 'selected' : '' ?>>
+                                Hoàn thành</option>
+                            <option value="CANCELLED" <?= ($_GET['status'] ?? '') == 'CANCELLED' ? 'selected' : '' ?>>Đã
+                                hủy</option>
                         </select>
 
-                        <input type="date" id="filterFromDate" class="border rounded-lg px-4 py-2" placeholder="Từ ngày">
+                        <!-- Từ ngày -->
+                        <input type="date" name="from_date" value="<?= $_GET['from_date'] ?? '' ?>"
+                            class="border rounded-lg px-4 py-2">
 
-                        <input type="date" id="filterToDate" class="border rounded-lg px-4 py-2" placeholder="Đến ngày">
+                        <!-- Đến ngày -->
+                        <input type="date" name="to_date" value="<?= $_GET['to_date'] ?? '' ?>"
+                            class="border rounded-lg px-4 py-2">
 
-                        <button class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
-                            <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-                            </svg>
-                            Lọc
+                        <!-- Nút lọc -->
+                        <button type="submit" class="px-6 py-2 rounded-lg font-semibold text-white"
+                            style="background: var(--primary-color);">
+                            🔍 Lọc
                         </button>
-                    </div>
+
+                    </form>
                 </section>
+
 
                 <!-- Order List -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold">Danh sách đơn đặt xe</h2>
-                        <span class="text-gray-600">Tổng số: <strong id="totalOrders">3,107</strong> đơn</span>
+                        <strong id="totalOrders"><?= number_format($totalOrders) ?></strong>
+
                     </div>
 
                     <div class="overflow-x-auto">
@@ -159,128 +208,157 @@
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trạm</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Khách hàng</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Xe</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày thuê</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày trả</th>
+                                    <!-- <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày thuê</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày trả</th> -->
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tổng tiền</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trạng thái</th>
                                     <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody id="orderTableBody" class="divide-y">
-                                <!-- Sample Data -->
+                            <tbody class="divide-y">
+                                <?php foreach ($orders as $order): ?>
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-mono">#DH001</td>
-                                    <td class="px-4 py-3 text-sm">Nguyễn Huệ - Q1</td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Nguyễn Văn A</div>
-                                        <div class="text-xs text-gray-500">0901234567</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Toyota Camry</div>
-                                        <div class="text-xs text-gray-500">51G-12345</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">07/01/2026</td>
-                                    <td class="px-4 py-3 text-sm">10/01/2026</td>
-                                    <td class="px-4 py-3 text-sm font-bold text-green-600">3,600,000đ</td>
+                                    <td class="px-4 py-3 font-mono">#<?= htmlspecialchars($order['order_code']) ?></td>
+
+                                    <td class="px-4 py-3"><?= htmlspecialchars($order['station_name']) ?></td>
+
                                     <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                                            Đơn mới
+                                        <div class="font-semibold"><?= htmlspecialchars($order['full_name']) ?></div>
+                                        <div class="text-xs text-gray-500"><?= htmlspecialchars($order['phone']) ?>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        <div class="font-semibold"><?= htmlspecialchars($order['vehicle_name']) ?></div>
+                                        <div class="text-xs text-gray-500">
+                                            <?= htmlspecialchars($order['license_plate']) ?></div>
+                                    </td>
+                                    <!-- 
+                                    <td class="px-4 py-3"><?= date('d/m/Y', strtotime($order['start_date'])) ?></td>
+                                    <td class="px-4 py-3"><?= date('d/m/Y', strtotime($order['end_date'])) ?></td> -->
+
+                                    <td class="px-4 py-3 font-bold text-green-600">
+                                        <?= number_format($order['total_amount'], 0, ',', '.') ?>đ
+                                    </td>
+
+                                    <td class="px-4 py-3">
+                                        <?php
+                                        $statusMap = [
+                                            'NEW' => ['Đơn mới', 'bg-blue-100 text-blue-700'],
+                                            'RENTING' => ['Đang thuê', 'bg-green-100 text-green-700'],
+                                            'WAITING_RETURN' => ['Chờ trả xe', 'bg-yellow-100 text-yellow-700'],
+                                            'COMPLETED' => ['Hoàn tất', 'bg-gray-100 text-gray-700'],
+                                            'CANCELLED' => ['Đã hủy', 'bg-red-100 text-red-700'],
+                                        ];
+                                        [$label, $class] = $statusMap[$order['status']];
+                                        ?>
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $class ?>">
+                                            <?= $label ?>
                                         </span>
                                     </td>
+
                                     <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
+
+                                        <!-- Xem -->
+                                        <button onclick="viewOrder('<?= $order['order_code'] ?>')"
+                                            class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
                                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button class="text-yellow-600 hover:text-yellow-800 mx-1" title="Chỉnh sửa">
+
+                                        <!-- DUYỆT ĐƠN khi ĐƠN MỚI -->
+                                        <?php if ($order['status'] === 'NEW'): ?>
+                                        <button onclick="approveOrder('<?= $order['order_code'] ?>')"
+                                            class="text-green-600 hover:text-green-800 mx-1" title="Duyệt đơn">
                                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button class="text-red-600 hover:text-red-800 mx-1" title="Hủy đơn">
+                                        <?php endif; ?>
+
+                                        <!-- HỦY ĐƠN khi ĐƠN MỚI hoặc ĐANG THUÊ -->
+                                        <?php if (in_array($order['status'], ['NEW', 'RENTING'])): ?>
+                                        <button onclick="cancelOrder('<?= $order['order_code'] ?>')"
+                                            class="text-red-600 hover:text-red-800 mx-1" title="Hủy đơn">
                                             <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                                <path fill-rule="evenodd"
+                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
+                                        <?php endif; ?>
+
+                                        <!-- XÁC NHẬN TRẢ XE khi CHỜ TRẢ -->
+                                        <?php if ($order['status'] === 'WAITING_RETURN'): ?>
+                                        <button onclick="completeOrder('<?= $order['order_code'] ?>')"
+                                            class="text-purple-600 hover:text-purple-800 mx-1" title="Xác nhận trả xe">
+                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <?php endif; ?>
+
+                                        <!-- XÓA ĐƠN (chỉ khi đã HỦY hoặc HOÀN THÀNH) -->
+                                        <?php if (in_array($order['status'], ['CANCELLED', 'COMPLETED'])): ?>
+                                        <button onclick="deleteOrder('<?= $order['order_code'] ?>')"
+                                            class="text-gray-600 hover:text-gray-800 mx-1" title="Xóa đơn">
+                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <?php endif; ?>
+
                                     </td>
+
                                 </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-mono">#DH002</td>
-                                    <td class="px-4 py-3 text-sm">Lê Lợi - Q1</td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Trần Thị B</div>
-                                        <div class="text-xs text-gray-500">0912345678</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Honda CR-V</div>
-                                        <div class="text-xs text-gray-500">51H-67890</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">05/01/2026</td>
-                                    <td class="px-4 py-3 text-sm">12/01/2026</td>
-                                    <td class="px-4 py-3 text-sm font-bold text-green-600">10,500,000đ</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                            Đang thuê
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50 bg-yellow-50">
-                                    <td class="px-4 py-3 text-sm font-mono">#DH003</td>
-                                    <td class="px-4 py-3 text-sm">Võ Văn Tần - Q3</td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Lê Văn C</div>
-                                        <div class="text-xs text-gray-500">0923456789</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">
-                                        <div class="font-semibold">Ford Tourneo</div>
-                                        <div class="text-xs text-gray-500">51F-24680</div>
-                                    </td>
-                                    <td class="px-4 py-3 text-sm">01/01/2026</td>
-                                    <td class="px-4 py-3 text-sm">10/01/2026</td>
-                                    <td class="px-4 py-3 text-sm font-bold text-green-600">16,200,000đ</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                                            Chờ trả xe
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-green-600 hover:text-green-800 mx-1" title="Xác nhận trả xe">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <?php endforeach; ?>
                             </tbody>
+
                         </table>
                     </div>
 
                     <!-- Pagination -->
                     <div class="flex justify-between items-center mt-4">
-                        <span class="text-sm text-gray-600">Hiển thị 1-3 của 3,107 đơn</span>
+                        <span class="text-sm text-gray-600">
+                            Hiển thị <?= $from ?>–<?= $to ?> của <?= number_format($totalOrders) ?> đơn
+                        </span>
+
                         <div class="flex space-x-2">
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Trước</button>
-                            <button class="px-4 py-2 border rounded-lg text-white" style="background: var(--primary-color);">1</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">2</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">3</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Sau</button>
+                            <!-- Trước -->
+                            <?php if ($page > 1): ?>
+                            <a href="?page=<?= $page - 1 ?>" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                                Trước
+                            </a>
+                            <?php endif; ?>
+
+                            <!-- Các trang -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <a href="?page=<?= $i ?>" class="px-4 py-2 border rounded-lg
+           <?= $i == $page 
+                ? 'text-white bg-blue-600' 
+                : 'hover:bg-gray-50' ?>">
+                                <?= $i ?>
+                            </a>
+                            <?php endfor; ?>
+
+                            <!-- Sau -->
+                            <?php if ($page < $totalPages): ?>
+                            <a href="?page=<?= $page + 1 ?>" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                                Sau
+                            </a>
+                            <?php endif; ?>
                         </div>
+
                     </div>
                 </section>
 
@@ -289,8 +367,223 @@
             <?php include '../../../includes/footer.php'; ?>
         </div>
     </div>
+    <div id="viewOrderModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full">
+            <!-- Header -->
+            <div class="p-6 rounded-t-2xl"
+                style="background: linear-gradient(to right, rgb(0,102,102), rgb(0,120,120));">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-white">
+                        Chi tiết đơn đặt xe
+                    </h2>
+                    <button onclick="closeOrderModal()" class="text-white p-2">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div><b>Mã đơn:</b> <span id="v_orderCode"></span></div>
+                <div><b>Trạng thái:</b> <span id="v_status"></span></div>
+
+                <div><b>Trạm:</b> <span id="v_station"></span></div>
+                <div><b>Xe:</b> <span id="v_vehicle"></span></div>
+
+                <div><b>Biển số:</b> <span id="v_plate"></span></div>
+                <div><b>Loại xe:</b> <span id="v_type"></span></div>
+
+                <div><b>Khách hàng:</b> <span id="v_user"></span></div>
+                <div><b>SĐT:</b> <span id="v_phone"></span></div>
+
+                <div><b>Ngày thuê:</b> <span id="v_start"></span></div>
+                <div><b>Ngày trả:</b> <span id="v_end"></span></div>
+
+                <div><b>Tổng tiền:</b> <span id="v_amount" class="text-green-600 font-bold"></span></div>
+                <div><b>Ngày tạo:</b> <span id="v_created"></span></div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="p-6 bg-gray-50 rounded-b-2xl text-right">
+                <button onclick="closeOrderModal()" class="px-6 py-2 text-white rounded-lg"
+                    style="background: linear-gradient(to right, rgb(0,102,102), rgb(0,120,120));">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script src="../../../js/main.js"></script>
+    <script>
+    function viewOrder(code) {
+        fetch('/ITS/assets/php/admin/order_view.php?code=' + code)
+            .then(res => res.json())
+            .then(o => {
+                document.getElementById('v_orderCode').innerText = '#' + o.order_code;
+                document.getElementById('v_station').innerText = o.station_name;
+                document.getElementById('v_vehicle').innerText = o.vehicle_name;
+                document.getElementById('v_plate').innerText = o.license_plate;
+                document.getElementById('v_type').innerText = o.vehicle_type;
+
+                document.getElementById('v_user').innerText = o.full_name;
+                document.getElementById('v_phone').innerText = o.phone;
+
+                document.getElementById('v_start').innerText = formatDate(o.start_date);
+                document.getElementById('v_end').innerText = formatDate(o.end_date);
+                document.getElementById('v_created').innerText = formatDateTime(o.created_at);
+
+                document.getElementById('v_amount').innerText =
+                    Number(o.total_amount).toLocaleString('vi-VN') + 'đ';
+
+                document.getElementById('v_status').innerHTML = renderStatus(o.status);
+
+                document.getElementById('viewOrderModal').classList.remove('hidden');
+            });
+    }
+
+    function closeOrderModal() {
+        document.getElementById('viewOrderModal').classList.add('hidden');
+    }
+
+    function approveOrder(code) {
+        Swal.fire({
+            title: 'Duyệt đơn đặt xe',
+            text: 'Xác nhận duyệt đơn này?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Duyệt',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#10b981'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updateOrderStatus(code, 'RENTING', 'Đơn đã được duyệt');
+            }
+        });
+    }
+
+    function cancelOrder(code) {
+        Swal.fire({
+            title: 'Hủy đơn đặt xe',
+            text: 'Bạn có chắc muốn hủy đơn này?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Hủy đơn',
+            cancelButtonText: 'Không',
+            confirmButtonColor: '#ef4444'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updateOrderStatus(code, 'CANCELLED', 'Đơn đã bị hủy');
+            }
+        });
+    }
+
+    function completeOrder(code) {
+        Swal.fire({
+            title: 'Xác nhận trả xe',
+            text: 'Khách hàng đã trả xe?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Đã trả',
+            cancelButtonText: 'Chưa',
+            confirmButtonColor: '#8b5cf6'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updateOrderStatus(code, 'COMPLETED', 'Đơn đã hoàn thành');
+            }
+        });
+    }
+
+    function deleteOrder(code) {
+        Swal.fire({
+            title: 'Xóa đơn đặt xe',
+            text: 'Thao tác này không thể hoàn tác!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#dc2626'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/ITS/assets/php/admin/delete_order.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_code: code })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã xóa',
+                            text: data.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire('Lỗi', data.message, 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function updateOrderStatus(code, status, successMsg) {
+        fetch('/ITS/assets/php/admin/update_order_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ order_code: code, status: status })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: successMsg,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => location.reload());
+            } else {
+                Swal.fire('Lỗi', data.message, 'error');
+            }
+        });
+    }
+
+    function formatDate(d) {
+        return new Date(d).toLocaleDateString('vi-VN');
+    }
+
+    function formatDateTime(d) {
+        return new Date(d).toLocaleString('vi-VN');
+    }
+
+    function renderStatus(status) {
+        const map = {
+            NEW: ['Đơn mới', 'text-blue-600'],
+            RENTING: ['Đang thuê', 'text-green-600'],
+            WAITING_RETURN: ['Chờ trả xe', 'text-yellow-600'],
+            COMPLETED: ['Hoàn tất', 'text-gray-600'],
+            CANCELLED: ['Đã hủy', 'text-red-600']
+        };
+        return `<b class="${map[status][1]}">${map[status][0]}</b>`;
+    }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if (!empty($_SESSION['alert'])): ?>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    Swal.fire({
+        icon: '<?= $_SESSION['alert']['type'] ?>',
+        title: '<?= $_SESSION['alert']['title'] ?>',
+        text: '<?= $_SESSION['alert']['text'] ?>',
+        confirmButtonText: 'OK'
+    });
+    </script>
+    <?php unset($_SESSION['alert']); endif; ?>
 </body>
 
 </html>
