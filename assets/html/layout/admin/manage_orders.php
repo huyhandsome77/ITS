@@ -267,7 +267,7 @@ include '../../../php/admin/xuly_order.php';
 
                                         <!-- Chỉ HỦY khi ĐƠN MỚI -->
                                         <?php if ($order['status'] === 'NEW'): ?>
-                                        <a href="/QuanTriMang/assets/php/admin/cancel_order.php?code=<?= $order['order_code'] ?>"
+                                        <a href="/ITS/assets/php/admin/cancel_order.php?code=<?= $order['order_code'] ?>"
                                             class="text-red-600 mx-1"
                                             onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">
                                             ❌
@@ -276,7 +276,7 @@ include '../../../php/admin/xuly_order.php';
 
                                         <!-- Chỉ XÁC NHẬN TRẢ XE khi CHỜ TRẢ -->
                                         <?php if ($order['status'] === 'WAITING_RETURN'): ?>
-                                        <a href="/QuanTriMang/assets/php/admin/return_order.php?code=<?= $order['order_code'] ?>"
+                                        <a href="/ITS/assets/php/admin/return_order.php?code=<?= $order['order_code'] ?>"
                                             class="text-green-600 mx-1"
                                             onclick="return confirm('Xác nhận khách đã trả xe?')">
                                             ✅
@@ -385,7 +385,7 @@ include '../../../php/admin/xuly_order.php';
     <script src="../../../js/main.js"></script>
     <script>
     function viewOrder(code) {
-        fetch('/QuanTriMang/assets/php/admin/order_view.php?code=' + code)
+        fetch('/ITS/assets/php/admin/order_view.php?code=' + code)
             .then(res => res.json())
             .then(o => {
                 document.getElementById('v_orderCode').innerText = '#' + o.order_code;

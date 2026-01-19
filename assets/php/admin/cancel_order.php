@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/QuanTriMang/config/Connect_DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 
 $code = $_GET['code'] ?? '';
 
@@ -10,7 +10,7 @@ if ($code === '') {
         'title' => 'Lỗi',
         'text' => 'Mã đơn không hợp lệ'
     ];
-    header('Location: /QuanTriMang/assets/html/layout/admin/manage_orders.php');
+    header('Location: /ITS/assets/html/layout/admin/manage_orders.php');
     exit;
 }
 
@@ -35,7 +35,7 @@ try {
             'title' => 'Không thể hủy',
             'text' => 'Chỉ được hủy khi đơn ở trạng thái ĐƠN MỚI'
         ];
-        header('Location: /QuanTriMang/assets/html/layout/admin/manage_orders.php');
+        header('Location: /ITS/assets/html/layout/admin/manage_orders.php');
         exit;
     }
 
@@ -66,5 +66,5 @@ try {
     ];
 }
 
-header('Location: /QuanTriMang/assets/html/layout/admin/manage_orders.php');
+header('Location: /ITS/assets/html/layout/admin/manage_orders.php');
 exit;

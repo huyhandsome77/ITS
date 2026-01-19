@@ -198,7 +198,7 @@
                                                 <?= empty($user['avatar']) ? 'bg-blue-500 text-white' : '' ?>">
 
                                                 <?php if (!empty($user['avatar'])): ?>
-                                                <img src="/QuanTriMang/assets/img/avatars/<?= htmlspecialchars($user['avatar']) ?>"
+                                                <img src="/ITS/assets/img/avatars/<?= htmlspecialchars($user['avatar']) ?>"
                                                     alt="Avatar" class="w-full h-full object-cover">
                                                 <?php else: ?>
                                                 <?= getInitials($user['full_name']) ?>
@@ -328,7 +328,7 @@
                     </svg>
                 </button>
             </div>
-            <form id="userForm" class="p-6" method="POST" action="/QuanTriMang/assets/php/admin/add_user.php">
+            <form id="userForm" class="p-6" method="POST" action="/ITS/assets/php/admin/add_user.php">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                     <div class="md:col-span-2">
@@ -655,7 +655,7 @@
 
     // Load data form edit
     function editUser(userId) {
-        fetch('/QuanTriMang/assets/php/admin/get_user.php?id=' + userId)
+        fetch('/ITS/assets/php/admin/get_user.php?id=' + userId)
             .then(res => res.json())
             .then(data => {
                 document.getElementById('edit_user_id').value = data.user_id;
@@ -705,7 +705,7 @@
     }
 
     function updateUserStatus(userId, status) {
-        fetch('/QuanTriMang/assets/php/admin/update_user_status.php', {
+        fetch('/ITS/assets/php/admin/update_user_status.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -733,7 +733,7 @@
 
 
     function viewUser(userId) {
-        fetch('/QuanTriMang/assets/php/admin/get_user_detail.php?id=' + userId)
+        fetch('/ITS/assets/php/admin/get_user_detail.php?id=' + userId)
             .then(res => res.json())
             .then(user => {
                 // Avatar chữ cái
@@ -795,7 +795,7 @@
     document.getElementById('editUserForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        fetch('/QuanTriMang/assets/php/admin/update_user.php', {
+        fetch('/ITS/assets/php/admin/update_user.php', {
             method: 'POST',
             body: new FormData(this)
         }).then(() => {

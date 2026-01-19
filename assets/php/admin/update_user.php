@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/QuanTriMang/config/Connect_DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 
 $id        = $_POST['user_id'];
 $full_name = $_POST['full_name'];
@@ -43,5 +43,5 @@ $_SESSION['swal'] = [
     'text' => 'Thông tin người dùng đã được cập nhật'
 ];
 
-header('Location: /QuanTriMang/assets/html/layout/admin/manage_users.php');
+header('Location: /ITS/assets/html/layout/admin/manage_users.php');
 exit;

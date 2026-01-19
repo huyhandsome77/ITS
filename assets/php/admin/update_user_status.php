@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/QuanTriMang/config/Connect_DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 

@@ -1,5 +1,5 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT'] . '/QuanTriMang/config/Connect_DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 
 $code = $_GET['code'] ?? '';
 

@@ -13,7 +13,8 @@
         </svg>
         <div>
             <a href="<?php echo isset($baseUrl) ? $baseUrl : ''; ?>/assets/html/layout/station/manage_vehicles.php">
-        <h1 id="appTitle" class="text-xl md:text-2xl font-bold" style="color: var(--primary-color);">thuexe.com</h1> 
+                <h1 id="appTitle" class="text-xl md:text-2xl font-bold" style="color: var(--primary-color);">thuexe.com
+                </h1>
             </a>
         </div>
     </div>
@@ -23,19 +24,18 @@
             Trang chủ
         </a>
         <a href="<?php echo isset($baseUrl)? $baseUrl : '';?>/assets/html/layout/station/notifications.php"
-         class="nav-item px-4 lg:px-5 py-2.5 rounded-lg font-medium text-sm lg:text-base">
-        Thông báo
-        <span class="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1">3</span>
+            class="nav-item px-4 lg:px-5 py-2.5 rounded-lg font-medium text-sm lg:text-base">
+            Thông báo
+            <span class="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1">3</span>
         </a>
-        
+
 
         <a href="#" class="nav-item px-4 lg:px-5 py-2.5 rounded-lg font-medium text-sm lg:text-base">
             Liên hệ
         </a>
         <?php if (!isset($_SESSION['user_id'])): ?>
 
-        <a href="#"
-            class="btn-primary px-6 lg:px-7 py-3 rounded-lg font-bold text-sm lg:text-base shadow-lg text-white"
+        <a href="#" class="btn-primary px-6 lg:px-7 py-3 rounded-lg font-bold text-sm lg:text-base shadow-lg text-white"
             style="background: var(--sidebar-gradient);">
             Chào bạn!
         </a>

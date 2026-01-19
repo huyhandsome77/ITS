@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once $_SERVER['DOCUMENT_ROOT'] . '/QuanTriMang/config/Connect_DB.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /QuanTriMang/assets/html/layout/admin/manage_users.php');
+    header('Location: /ITS/assets/html/layout/admin/manage_users.php');
     exit;
 }
 
@@ -21,7 +21,7 @@ if (!$full_name || !$email || !$password) {
         'title' => 'Lỗi',
         'text' => 'Vui lòng nhập đầy đủ thông tin bắt buộc'
     ];
-    header('Location: /QuanTriMang/assets/html/layout/admin/manage_users.php');
+    header('Location: /ITS/assets/html/layout/admin/manage_users.php');
     exit;
 }
 
@@ -34,7 +34,7 @@ if ($check->fetchColumn() > 0) {
         'title' => 'Email đã tồn tại',
         'text' => 'Vui lòng sử dụng email khác'
     ];
-    header('Location: /QuanTriMang/assets/html/layout/admin/manage_users.php');
+    header('Location: /ITS/assets/html/layout/admin/manage_users.php');
     exit;
 }
 
@@ -62,5 +62,5 @@ $_SESSION['swal'] = [
     'text' => 'Đã thêm người dùng mới'
 ];
 
-header('Location: /QuanTriMang/assets/html/layout/admin/manage_users.php');
+header('Location: /ITS/assets/html/layout/admin/manage_users.php');
 exit;

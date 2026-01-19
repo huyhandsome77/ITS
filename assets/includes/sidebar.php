@@ -11,7 +11,7 @@
         <h2 id="sidebarTitle"
             class="flex items-center justify-between text-xl font-bold text-white transition-opacity duration-300">
 
-            <img src="/QuanTriMang/assets/img/Logo.png" alt="Logo" class="h-10 w-auto ms-4">
+            <img src="/ITS/assets/img/Logo.png" alt="Logo" class="h-10 w-auto ms-4">
 
             <span class="ms-4">MENU</span>
         </h2>
