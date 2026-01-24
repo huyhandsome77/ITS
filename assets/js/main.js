@@ -339,3 +339,37 @@ setInterval(() => {
     slider.classList.remove("opacity-0");
   }, 500);
 }, 4000);
+
+
+const citySelect = document.getElementById('citySelect');
+const districtSelect = document.getElementById('districtSelect');
+
+const districtsByCity = {
+    'TP. Hồ Chí Minh': [
+        'Quận 1', 'Quận 3', 'Quận 5', 'Quận 7',
+        'Quận Tân Bình', 'Quận Phú Nhuận', 'Quận Bình Thạnh'
+    ],
+    'Hà Nội': [
+        'Hoàn Kiếm', 'Ba Đình', 'Đống Đa',
+        'Cầu Giấy', 'Thanh Xuân'
+    ],
+    'Đà Nẵng': [
+        'Hải Châu', 'Thanh Khê', 'Sơn Trà', 'Ngũ Hành Sơn'
+    ]
+};
+
+citySelect.addEventListener('change', function () {
+    const city = this.value;
+
+    districtSelect.innerHTML =
+        '<option value="">-- Chọn Quận / Huyện --</option>';
+
+    if (!districtsByCity[city]) return;
+
+    districtsByCity[city].forEach(d => {
+        const option = document.createElement('option');
+        option.value = d;
+        option.textContent = d;
+        districtSelect.appendChild(option);
+    });
+});

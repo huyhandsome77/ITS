@@ -39,45 +39,39 @@
 
                 </section>
                 <!-- Stations Section -->
-                <section class="mb-6">
-                    <h3 class="text-2xl font-bold mb-4">🗺️ Chọn khu vực (Quận / Huyện)</h3>
+                <?php include '../assets/php/user/get_station.php'
+                ?>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- CHỌN KHU VỰC -->
+                <section class="mb-6">
+                    <h3 class="text-2xl font-bold mb-4">🗺️ Chọn khu vực</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <select id="citySelect" class="p-3 rounded-lg border">
                             <option value="">-- Chọn Thành phố --</option>
-                            <option value="hcm">TP. Hồ Chí Minh</option>
-                            <option value="hn">Hà Nội</option>
                         </select>
-
-                        <select id="districtSelect" class="p-3 rounded-lg border">
+                        <select id="districtSelect" class="p-3 rounded-lg border" disabled>
                             <option value="">-- Chọn Quận / Huyện --</option>
                         </select>
+                        <button id="searchStationBtn"
+                            class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                            🔍 Tìm trạm
+                        </button>
                     </div>
                 </section>
 
-                <!-- Map -->
-                <section class="mb-8">
-                    <div class="w-full h-[420px] rounded-xl overflow-hidden shadow border">
-                        <div id="map" class="w-full h-full"></div>
-                    </div>
+                <!-- ĐỊA CHỈ USER -->
+                <section class="mb-6">
+                    <h3 class="text-2xl font-bold mb-4">🏠 Địa chỉ của bạn</h3>
+                    <input id="addressInput" type="text" placeholder="VD: 12 Nguyễn Huệ, Quận 1"
+                        class="w-full p-3 border rounded-lg">
                 </section>
-                <!-- Address Input -->
-                <h3 class="text-2xl font-bold mb-4">🏠 Nhập địa chỉ của bạn</h3>
-                <div class="relative mb-4">
-                    <input id="addressInput" type="text" placeholder="Nhập địa chỉ (VD: 12 Nguyễn Huệ, Quận 1)"
-                        class="w-full p-3 border rounded-lg" autocomplete="off" />
 
-                    <ul id="addressSuggest"
-                        class="absolute left-0 right-0 bg-white border rounded-lg mt-1 max-h-60 overflow-auto hidden z-50">
-                    </ul>
-                </div>
-
-
-                <!-- Danh sách trạm -->
+                <!-- DANH SÁCH TRẠM -->
                 <section>
-                    <h3 class="text-2xl font-bold mb-4">📍 Các trạm trong khu vực</h3>
+                    <h3 class="text-2xl font-bold mb-4">📍 Các trạm</h3>
                     <div id="stationList" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
                 </section>
+
 
 
 
@@ -208,7 +202,6 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
-</script>
 
 
 </html>

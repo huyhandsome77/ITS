@@ -233,6 +233,7 @@
             </div>
 
             <!-- FORM -->
+            <!-- FORM -->
             <form action="/ITS/assets/php/admin/station/add_station.php" method="POST" class="p-6">
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -244,11 +245,30 @@
                             placeholder="VD: Trạm Nguyễn Huệ - Q1">
                     </div>
 
-                    <!-- ĐỊA CHỈ -->
+                    <!-- THÀNH PHỐ / TỈNH -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Thành phố / Tỉnh</label>
+                        <select id="citySelect" name="city" class="w-full border rounded-lg px-4 py-2" required>
+                            <option value="">-- Chọn Thành phố --</option>
+                            <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Đà Nẵng">Đà Nẵng</option>
+                        </select>
+                    </div>
+
+                    <!-- QUẬN / HUYỆN -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Quận / Huyện</label>
+                        <select id="districtSelect" name="district" class="w-full border rounded-lg px-4 py-2" required>
+                            <option value="">-- Chọn Quận / Huyện --</option>
+                        </select>
+                    </div>
+
+                    <!-- ĐỊA CHỈ CHI TIẾT -->
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold mb-2">Địa chỉ</label>
+                        <label class="block text-sm font-semibold mb-2">Địa chỉ chi tiết</label>
                         <input type="text" name="address" class="w-full border rounded-lg px-4 py-2"
-                            placeholder="VD: 12 Nguyễn Huệ, Quận 1">
+                            placeholder="VD: 12 Nguyễn Huệ">
                     </div>
 
                     <!-- TRẠNG THÁI -->
