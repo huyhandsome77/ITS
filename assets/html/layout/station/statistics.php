@@ -1,3 +1,10 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_statistics.php';
+?>
 <!doctype html>
 <html lang="vi" class="h-full">
 
@@ -33,15 +40,17 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h1 class="text-3xl font-bold" style="color: var(--primary-color);">THỐNG KÊ</h1>
-                        <p class="text-gray-600 mt-1">Trạm: <span class="font-semibold" id="stationName">Nguyễn Huệ - Quận 1</span></p>
+                        <p class="text-gray-600 mt-1">Trạm: <span class="font-semibold" id="stationName"><?= htmlspecialchars($stationName) ?></span></p>
                     </div>
                     <div class="flex space-x-3">
-                        <select id="filterPeriod" class="border rounded-lg px-4 py-2">
-                            <option value="today">Hôm nay</option>
-                            <option value="week">7 ngày qua</option>
-                            <option value="month" selected>30 ngày qua</option>
-                            <option value="year">Năm nay</option>
-                        </select>
+                        <form method="GET" class="inline">
+                            <select name="period" id="filterPeriod" class="border rounded-lg px-4 py-2" onchange="this.form.submit()">
+                                <option value="today" <?= $period === 'today' ? 'selected' : '' ?>>Hôm nay</option>
+                                <option value="week" <?= $period === 'week' ? 'selected' : '' ?>>7 ngày qua</option>
+                                <option value="month" <?= $period === 'month' ? 'selected' : '' ?>>30 ngày qua</option>
+                                <option value="year" <?= $period === 'year' ? 'selected' : '' ?>>Năm nay</option>
+                            </select>
+                        </form>
                         <button class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
                             <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -57,8 +66,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-blue-100 text-sm">Tổng doanh thu</p>
-                                <h3 class="text-3xl font-bold mt-1">127M</h3>
-                                <p class="text-blue-100 text-xs mt-1">+12.5% so với tháng trước</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= formatRevenue($currentRevenue) ?></h3>
+                                <p class="text-blue-100 text-xs mt-1"><?= $revenueGrowthText ?></p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -73,8 +82,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-green-100 text-sm">Tổng đơn hàng</p>
-                                <h3 class="text-3xl font-bold mt-1">248</h3>
-                                <p class="text-green-100 text-xs mt-1">+8.2% so với tháng trước</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= $totalOrders ?></h3>
+                                <p class="text-green-100 text-xs mt-1">Trong kỳ này</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -88,9 +97,9 @@
                     <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-purple-100 text-sm">Tổng phương tiện</p>
-                                <h3 class="text-3xl font-bold mt-1">12</h3>
-                                <p class="text-purple-100 text-xs mt-1">10 sẵn sàng, 2 đang thuê</p>
+                                <p class="text-purple-100 text-sm">Tỷ lệ sử dụng</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= $vehicleUtilization ?>%</h3>
+                                <p class="text-purple-100 text-xs mt-1">Hiệu quả sử dụng phương tiện</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -101,16 +110,16 @@
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl shadow-lg p-6 text-white">
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-yellow-100 text-sm">Tỷ lệ sử dụng</p>
-                                <h3 class="text-3xl font-bold mt-1">85%</h3>
-                                <p class="text-yellow-100 text-xs mt-1">Tốt hơn 73% trạm khác</p>
+                                <p class="text-orange-100 text-sm">Tỷ lệ hoàn thành</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= $completionRate ?>%</h3>
+                                <p class="text-orange-100 text-xs mt-1">Đơn hàng thành công</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
                         </div>
@@ -150,75 +159,31 @@
                     <div class="bg-white rounded-2xl shadow-sm border p-6">
                         <h3 class="text-lg font-semibold mb-4">Top 5 xe theo doanh thu</h3>
                         <div class="space-y-4">
+                            <?php
+                            if (!empty($topVehicles)) {
+                                $rankColors = ['bg-blue-600', 'bg-gray-600', 'bg-yellow-600', 'bg-gray-400', 'bg-gray-400'];
+                                foreach ($topVehicles as $index => $vehicle) {
+                                    $colorClass = $rankColors[$index] ?? 'bg-gray-400';
+                            ?>
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                                    <div class="w-8 h-8 <?= $colorClass ?> text-white rounded-full flex items-center justify-center font-bold"><?= $index + 1 ?></div>
                                     <div>
-                                        <div class="font-semibold">Toyota Camry</div>
-                                        <div class="text-xs text-gray-500">51G-12345</div>
+                                        <div class="font-semibold"><?= htmlspecialchars($vehicle['vehicle_name']) ?></div>
+                                        <div class="text-xs text-gray-500"><?= htmlspecialchars($vehicle['license_plate']) ?></div>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-bold text-green-600">18.5M</div>
-                                    <div class="text-xs text-gray-500">42 đơn</div>
+                                    <div class="font-bold text-green-600"><?= formatRevenue($vehicle['total_revenue']) ?></div>
+                                    <div class="text-xs text-gray-500"><?= $vehicle['total_orders'] ?> đơn</div>
                                 </div>
                             </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-gray-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
-                                    <div>
-                                        <div class="font-semibold">Honda CR-V</div>
-                                        <div class="text-xs text-gray-500">51H-67890</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-green-600">16.2M</div>
-                                    <div class="text-xs text-gray-500">38 đơn</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-yellow-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
-                                    <div>
-                                        <div class="font-semibold">Mazda CX-5</div>
-                                        <div class="text-xs text-gray-500">51M-13579</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-green-600">14.8M</div>
-                                    <div class="text-xs text-gray-500">35 đơn</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold">4</div>
-                                    <div>
-                                        <div class="font-semibold">Ford Tourneo</div>
-                                        <div class="text-xs text-gray-500">51F-24680</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-green-600">12.4M</div>
-                                    <div class="text-xs text-gray-500">28 đơn</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-gray-400 text-white rounded-full flex items-center justify-center font-bold">5</div>
-                                    <div>
-                                        <div class="font-semibold">VinFast VF8</div>
-                                        <div class="text-xs text-gray-500">51V-98765</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-green-600">10.9M</div>
-                                    <div class="text-xs text-gray-500">25 đơn</div>
-                                </div>
-                            </div>
+                            <?php 
+                                }
+                            } else {
+                                echo '<p class="text-gray-500 text-center py-8">Chưa có dữ liệu</p>';
+                            }
+                            ?>
                         </div>
                     </div>
 
@@ -230,11 +195,11 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-600">Khách hàng mới</p>
-                                        <p class="text-2xl font-bold text-blue-600">87</p>
+                                        <p class="text-2xl font-bold text-blue-600"><?= $newCustomers ?></p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xs text-gray-500">30 ngày qua</p>
-                                        <p class="text-sm font-semibold text-green-600">+15%</p>
+                                        <p class="text-xs text-gray-500">Trong kỳ này</p>
+                                        <p class="text-sm font-semibold text-gray-600"><?= $totalOrders > 0 ? round(($newCustomers / $totalOrders) * 100, 1) : 0 ?>%</p>
                                     </div>
                                 </div>
                             </div>
@@ -243,11 +208,11 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-600">Khách quay lại</p>
-                                        <p class="text-2xl font-bold text-green-600">161</p>
+                                        <p class="text-2xl font-bold text-green-600"><?= $returningCustomers ?></p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xs text-gray-500">30 ngày qua</p>
-                                        <p class="text-sm font-semibold text-green-600">+22%</p>
+                                        <p class="text-xs text-gray-500">Trong kỳ này</p>
+                                        <p class="text-sm font-semibold text-green-600"><?= $totalOrders > 0 ? round(($returningCustomers / $totalOrders) * 100, 1) : 0 ?>%</p>
                                     </div>
                                 </div>
                             </div>
@@ -256,11 +221,11 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-600">Đánh giá trung bình</p>
-                                        <p class="text-2xl font-bold text-purple-600">4.7 ⭐</p>
+                                        <p class="text-2xl font-bold text-purple-600"><?= $avgRating ?> ⭐</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xs text-gray-500">Từ 142 đánh giá</p>
-                                        <p class="text-sm font-semibold text-green-600">Tuyệt vời</p>
+                                        <p class="text-xs text-gray-500">Từ <?= $reviewCount ?> đánh giá</p>
+                                        <p class="text-sm font-semibold text-green-600"><?= $avgRating >= 4.5 ? 'Tuyệt vời' : ($avgRating >= 4.0 ? 'Tốt' : 'Khá') ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -269,11 +234,11 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         <p class="text-sm text-gray-600">Thời gian thuê TB</p>
-                                        <p class="text-2xl font-bold text-yellow-600">4.2 ngày</p>
+                                        <p class="text-2xl font-bold text-yellow-600"><?= $avgRentalDays ?> ngày</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-xs text-gray-500">30 ngày qua</p>
-                                        <p class="text-sm font-semibold text-green-600">+0.5 ngày</p>
+                                        <p class="text-xs text-gray-500">Trung bình</p>
+                                        <p class="text-sm font-semibold text-gray-600">Mỗi đơn hàng</p>
                                     </div>
                                 </div>
                             </div>
@@ -294,10 +259,10 @@
         const revenueChart = new Chart(revenueCtx, {
             type: 'line',
             data: {
-                labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
+                labels: <?= json_encode($revenueMonths) ?>,
                 datasets: [{
                     label: 'Doanh thu (triệu VNĐ)',
-                    data: [28, 32, 35, 32],
+                    data: <?= json_encode($revenueAmounts) ?>,
                     borderColor: 'rgb(59, 130, 246)',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     tension: 0.4,
@@ -326,9 +291,9 @@
         const orderStatusChart = new Chart(orderStatusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Đơn mới', 'Đang thuê', 'Chờ trả', 'Hoàn thành', 'Đã hủy'],
+                labels: <?= json_encode($orderStatusLabels) ?>,
                 datasets: [{
-                    data: [8, 15, 5, 127, 12],
+                    data: <?= json_encode($orderStatusCounts) ?>,
                     backgroundColor: [
                         'rgb(59, 130, 246)',
                         'rgb(34, 197, 94)',
@@ -354,10 +319,10 @@
         const vehicleUsageChart = new Chart(vehicleUsageCtx, {
             type: 'bar',
             data: {
-                labels: ['Toyota Camry', 'Honda CR-V', 'Mazda CX-5', 'Ford Tourneo', 'VinFast VF8', 'Kia Sorento', 'Hyundai Tucson', 'Toyota Vios', 'Honda City', 'Mazda 3'],
+                labels: <?= json_encode($vehicleNames) ?>,
                 datasets: [{
-                    label: 'Tỷ lệ sử dụng (%)',
-                    data: [92, 88, 85, 78, 72, 68, 65, 62, 58, 54],
+                    label: 'Số lần thuê',
+                    data: <?= json_encode($vehicleUsageCounts) ?>,
                     backgroundColor: 'rgba(34, 197, 94, 0.7)',
                     borderColor: 'rgb(34, 197, 94)',
                     borderWidth: 1
@@ -374,8 +339,7 @@
                 },
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        max: 100
+                        beginAtZero: true
                     }
                 }
             }

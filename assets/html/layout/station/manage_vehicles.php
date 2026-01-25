@@ -1,3 +1,10 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_vehicle.php';
+?>
 <!doctype html>
 <html lang="vi" class="h-full">
 
@@ -32,7 +39,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h1 class="text-3xl font-bold" style="color: var(--primary-color);">Quản lý phương tiện</h1>
-                        <p class="text-gray-600 mt-1">Trạm: <span class="font-semibold" id="stationName">Nguyễn Huệ - Quận 1</span></p>
+                        <p class="text-gray-600 mt-1">Trạm: <span class="font-semibold" id="stationName"><?= htmlspecialchars($stationName) ?></span></p>
                     </div>
                     <button id="btnAddVehicle"class="btn-primary px-6 py-3 rounded-lg font-bold text-sm lg:text-base shadow-lg text-white" style="background: var(--sidebar-gradient);">
                         <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -45,173 +52,135 @@
                 <!-- Filter Section -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5 mb-6">
                     <h2 class="text-lg font-semibold mb-4">Bộ lọc</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <select id="filterVehicleType" class="border rounded-lg px-4 py-2">
+                    <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <select name="vehicle_type" id="filterVehicleType" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả loại xe</option>
-                            <option value="sedan">Sedan</option>
-                            <option value="suv">SUV</option>
-                            <option value="mpv">MPV</option>
-                            <option value="hatchback">Hatchback</option>
+                            <?php foreach ($vehicleTypes as $type): ?>
+                                <option value="<?= htmlspecialchars($type) ?>" <?= $vehicleType === $type ? 'selected' : '' ?>>
+                                    <?= $type === 'Oto' ? 'Ô tô' : ($type === 'Xemay' ? 'Xe máy' : htmlspecialchars($type)) ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
 
-                        <select id="filterBrand" class="border rounded-lg px-4 py-2">
-                            <option value="">Tất cả hãng</option>
-                            <option value="toyota">Toyota</option>
-                            <option value="honda">Honda</option>
-                            <option value="mazda">Mazda</option>
-                            <option value="ford">Ford</option>
-                            <option value="vinfast">VinFast</option>
-                        </select>
-
-                        <select id="filterStatus" class="border rounded-lg px-4 py-2">
+                        <select name="status" id="filterStatus" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="available">Sẵn sàng</option>
-                            <option value="rented">Đang thuê</option>
-                            <option value="maintenance">Bảo trì</option>
+                            <option value="AVAILABLE" <?= $status === 'AVAILABLE' ? 'selected' : '' ?>>Sẵn sàng</option>
+                            <option value="RENTED" <?= $status === 'RENTED' ? 'selected' : '' ?>>Đang thuê</option>
+                            <option value="MAINTENANCE" <?= $status === 'MAINTENANCE' ? 'selected' : '' ?>>Bảo trì</option>
                         </select>
 
-                        <button class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
+                        <button type="submit" class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
                             <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                             </svg>
                             Lọc
                         </button>
-                    </div>
+                    </form>
                 </section>
 
                 <!-- Vehicle List -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold">Danh sách phương tiện</h2>
-                        <span class="text-gray-600">Tổng số: <strong id="totalVehicles">12</strong> xe</span>
+                        <span class="text-gray-600">Tổng số: <strong id="totalVehicles"><?= $filteredTotal ?></strong> xe</span>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-gray-50 border-b">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Mã xe</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Biển số</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tên xe</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Loại xe</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Hãng</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Dòng xe</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Năm SX</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Giá/ngày</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Giá/giờ</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Lượt thuê</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Đánh giá</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trạng thái</th>
                                     <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody id="vehicleTableBody" class="divide-y">
-                                <!-- Sample Data -->
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm">VH001</td>
-                                    <td class="px-4 py-3 text-sm font-mono">51G-12345</td>
-                                    <td class="px-4 py-3 text-sm">Sedan</td>
-                                    <td class="px-4 py-3 text-sm">Toyota</td>
-                                    <td class="px-4 py-3 text-sm">Camry</td>
-                                    <td class="px-4 py-3 text-sm">2022</td>
-                                    <td class="px-4 py-3 text-sm font-semibold">1,200,000đ</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-                                            Sẵn sàng
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-yellow-600 hover:text-yellow-800 mx-1" title="Chỉnh sửa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-800 mx-1" title="Xóa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm">VH002</td>
-                                    <td class="px-4 py-3 text-sm font-mono">51H-67890</td>
-                                    <td class="px-4 py-3 text-sm">SUV</td>
-                                    <td class="px-4 py-3 text-sm">Honda</td>
-                                    <td class="px-4 py-3 text-sm">CR-V</td>
-                                    <td class="px-4 py-3 text-sm">2023</td>
-                                    <td class="px-4 py-3 text-sm font-semibold">1,500,000đ</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                                            Đang thuê
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-yellow-600 hover:text-yellow-800 mx-1" title="Chỉnh sửa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-800 mx-1" title="Xóa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm">VH003</td>
-                                    <td class="px-4 py-3 text-sm font-mono">51F-24680</td>
-                                    <td class="px-4 py-3 text-sm">MPV</td>
-                                    <td class="px-4 py-3 text-sm">Ford</td>
-                                    <td class="px-4 py-3 text-sm">Tourneo</td>
-                                    <td class="px-4 py-3 text-sm">2021</td>
-                                    <td class="px-4 py-3 text-sm font-semibold">1,800,000đ</td>
-                                    <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">
-                                            Bảo trì
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-yellow-600 hover:text-yellow-800 mx-1" title="Chỉnh sửa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
-                                            </svg>
-                                        </button>
-                                        <button class="text-red-600 hover:text-red-800 mx-1" title="Xóa">
-                                            <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <?php if (empty($vehicles)): ?>
+                                    <tr>
+                                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">Không có phương tiện nào</td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($vehicles as $vehicle): 
+                                        $statusBadge = vehicleStatusLabel($vehicle['status']);
+                                    ?>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-3 text-sm font-mono"><?= htmlspecialchars($vehicle['license_plate']) ?></td>
+                                        <td class="px-4 py-3 text-sm font-semibold"><?= htmlspecialchars($vehicle['vehicle_name']) ?></td>
+                                        <td class="px-4 py-3 text-sm"><?= $vehicle['vehicle_type'] === 'Oto' ? 'Ô tô' : 'Xe máy' ?></td>
+                                        <td class="px-4 py-3 text-sm font-semibold"><?= formatCurrency($vehicle['price_per_day']) ?></td>
+                                        <td class="px-4 py-3 text-sm"><?= formatCurrency($vehicle['price_per_hour']) ?></td>
+                                        <td class="px-4 py-3 text-sm text-center"><?= $vehicle['total_rentals'] ?> lượt</td>
+                                        <td class="px-4 py-3 text-sm text-center"><?= number_format($vehicle['avg_rating'], 1) ?> ⭐</td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $statusBadge['class'] ?>">
+                                                <?= $statusBadge['label'] ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button onclick="viewVehicleDetail(<?= $vehicle['vehicle_id'] ?>)" class="text-blue-600 hover:text-blue-800 mx-1" title="Xem chi tiết">
+                                                <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                            </button>
+                                            <button onclick="editVehicle(<?= $vehicle['vehicle_id'] ?>)" class="text-yellow-600 hover:text-yellow-800 mx-1" title="Chỉnh sửa">
+                                                <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                                </svg>
+                                            </button>
+                                            <?php if ($vehicle['status'] === 'AVAILABLE'): ?>
+                                                <button onclick="toggleMaintenance(<?= $vehicle['vehicle_id'] ?>, 'MAINTENANCE')" class="text-orange-600 hover:text-orange-800 mx-1" title="Chuyển bảo trì">
+                                                    <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </button>
+                                            <?php elseif ($vehicle['status'] === 'MAINTENANCE'): ?>
+                                                <button onclick="toggleMaintenance(<?= $vehicle['vehicle_id'] ?>, 'AVAILABLE')" class="text-green-600 hover:text-green-800 mx-1" title="Kết thúc bảo trì">
+                                                    <svg class="w-5 h-5 inline-block" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                </button>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
                     <div class="flex justify-between items-center mt-4">
-                        <span class="text-sm text-gray-600">Hiển thị 1-3 của 12 xe</span>
+                        <span class="text-sm text-gray-600">
+                            Hiển thị <span class="font-semibold"><?= min($offset + 1, $filteredTotal) ?>-<?= min($offset + $limit, $filteredTotal) ?></span> 
+                            của <span class="font-semibold"><?= $filteredTotal ?></span> xe
+                        </span>
                         <div class="flex space-x-2">
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Trước</button>
-                            <button class="px-4 py-2 border rounded-lg bg-teal-600 text-white">1</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">2</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">3</button>
-                            <button class="px-4 py-2 border rounded-lg hover:bg-gray-50">Sau</button>
+                            <!-- Previous Button -->
+                            <a href="?page=<?= max(1, $page - 1) ?><?= !empty($vehicleType) ? '&vehicle_type=' . urlencode($vehicleType) : '' ?><?= !empty($status) ? '&status=' . urlencode($status) : '' ?>" 
+                               class="px-4 py-2 border rounded-lg hover:bg-gray-50 <?= $page <= 1 ? 'opacity-50 cursor-not-allowed pointer-events-none' : '' ?>">
+                                Trước
+                            </a>
+                            
+                            <!-- Page Numbers -->
+                            <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
+                                <a href="?page=<?= $i ?><?= !empty($vehicleType) ? '&vehicle_type=' . urlencode($vehicleType) : '' ?><?= !empty($status) ? '&status=' . urlencode($status) : '' ?>" 
+                                   class="px-4 py-2 <?= $i == $page ? 'bg-teal-600 text-white' : 'border hover:bg-gray-50' ?> rounded-lg">
+                                    <?= $i ?>
+                                </a>
+                            <?php endfor; ?>
+                            
+                            <!-- Next Button -->
+                            <a href="?page=<?= min($totalPages, $page + 1) ?><?= !empty($vehicleType) ? '&vehicle_type=' . urlencode($vehicleType) : '' ?><?= !empty($status) ? '&status=' . urlencode($status) : '' ?>" 
+                               class="px-4 py-2 border rounded-lg hover:bg-gray-50 <?= $page >= $totalPages ? 'opacity-50 cursor-not-allowed pointer-events-none' : '' ?>">
+                                Sau
+                            </a>
                         </div>
                     </div>
                 </section>
@@ -219,6 +188,59 @@
             </main>
 
             <?php include '../../../includes/footer.php'; ?>
+        </div>
+    </div>
+
+    <!-- Modal: View Vehicle Detail -->
+    <div id="viewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b flex justify-between items-center">
+                <h2 class="text-2xl font-bold" style="color: var(--primary-color);">Chi tiết phương tiện</h2>
+                <button id="closeViewModal" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="viewModalContent" class="p-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Biển số xe</label>
+                        <p id="view_license_plate" class="text-lg font-mono font-bold"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Tên xe</label>
+                        <p id="view_vehicle_name" class="text-lg font-semibold"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Loại xe</label>
+                        <p id="view_vehicle_type" class="text-lg"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Trạng thái</label>
+                        <p id="view_status"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Giá thuê / ngày</label>
+                        <p id="view_price_day" class="text-lg font-bold text-green-600"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Giá thuê / giờ</label>
+                        <p id="view_price_hour" class="text-lg font-bold text-green-600"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Số lượt thuê</label>
+                        <p id="view_rentals" class="text-lg"></p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1">
+                        <label class="block text-sm font-semibold text-gray-600 mb-1">Đánh giá trung bình</label>
+                        <p id="view_rating" class="text-lg"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t flex justify-end">
+                <button id="closeViewModalBtn" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Đóng</button>
+            </div>
         </div>
     </div>
 
@@ -234,63 +256,59 @@
                 </button>
             </div>
             <form id="vehicleForm" class="p-6">
+                <input type="hidden" id="vehicle_id" name="vehicle_id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-semibold mb-2">Biển số xe *</label>
-                        <input type="text" placeholder="VD: 51G-12345" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" id="license_plate" name="license_plate" placeholder="VD: 51G-12345" class="w-full border rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Tên xe *</label>
+                        <input type="text" id="vehicle_name" name="vehicle_name" placeholder="VD: Toyota Camry" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Loại xe *</label>
-                        <select class="w-full border rounded-lg px-4 py-2" required>
+                        <select id="vehicle_type" name="vehicle_type" class="w-full border rounded-lg px-4 py-2" required>
                             <option value="">-- Chọn loại --</option>
-                            <option>Sedan</option>
-                            <option>SUV</option>
-                            <option>MPV</option>
-                            <option>Hatchback</option>
+                            <option value="Oto">Ô tô</option>
+                            <option value="Xemay">Xe máy</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Hãng xe *</label>
-                        <select class="w-full border rounded-lg px-4 py-2" required>
-                            <option value="">-- Chọn hãng --</option>
-                            <option>Toyota</option>
-                            <option>Honda</option>
-                            <option>Mazda</option>
-                            <option>Ford</option>
-                            <option>VinFast</option>
-                        </select>
+                        <input type="text" id="brand" name="brand" placeholder="VD: Toyota, Honda" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Dòng xe *</label>
-                        <input type="text" placeholder="VD: Camry, CR-V" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="text" id="model" name="model" placeholder="VD: Camry, CR-V" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Năm sản xuất *</label>
-                        <input type="number" placeholder="2023" min="2000" max="2026" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="number" id="year" name="year" placeholder="2023" min="2000" max="2030" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Số chỗ ngồi *</label>
-                        <input type="number" placeholder="5" min="2" max="16" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="number" id="seats" name="seats" placeholder="5" min="2" max="16" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Giá thuê / ngày (VNĐ) *</label>
-                        <input type="number" placeholder="1000000" min="0" class="w-full border rounded-lg px-4 py-2" required>
+                        <input type="number" id="price_per_day" name="price_per_day" placeholder="1000000" min="0" class="w-full border rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Giá thuê / giờ (VNĐ) *</label>
+                        <input type="number" id="price_per_hour" name="price_per_hour" placeholder="100000" min="0" class="w-full border rounded-lg px-4 py-2" required>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold mb-2">Trạng thái *</label>
-                        <select class="w-full border rounded-lg px-4 py-2" required>
-                            <option value="available">Sẵn sàng</option>
-                            <option value="rented">Đang thuê</option>
-                            <option value="maintenance">Bảo trì</option>
+                        <select id="status" name="status" class="w-full border rounded-lg px-4 py-2" required>
+                            <option value="AVAILABLE">Sẵn sàng</option>
+                            <option value="RENTED">Đang thuê</option>
+                            <option value="MAINTENANCE">Bảo trì</option>
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-semibold mb-2">Màu sắc</label>
-                        <input type="text" placeholder="Trắng" class="w-full border rounded-lg px-4 py-2">
-                    </div>
-                    <div class="md:col-span-2">
                         <label class="block text-sm font-semibold mb-2">Mô tả</label>
-                        <textarea rows="3" placeholder="Thông tin thêm về xe..." class="w-full border rounded-lg px-4 py-2"></textarea>
+                        <textarea id="description" name="description" rows="3" placeholder="Thông tin thêm về xe..." class="w-full border rounded-lg px-4 py-2"></textarea>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
@@ -303,13 +321,44 @@
 
     <script src="../../../js/main.js"></script>
     <script>
-        // Modal handling
+        // Custom notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 animate-fade-in ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        ${type === 'success' 
+                            ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>'
+                            : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>'
+                        }
+                    </svg>
+                    <span class="font-semibold">${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Add/Edit Modal handling
         const modal = document.getElementById('vehicleModal');
         const btnAddVehicle = document.getElementById('btnAddVehicle');
         const closeModal = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
+        const modalTitle = modal.querySelector('h2');
+        let isEditMode = false;
+        let currentVehicleId = null;
 
         btnAddVehicle.addEventListener('click', () => {
+            isEditMode = false;
+            currentVehicleId = null;
+            modalTitle.textContent = 'Thêm xe mới';
+            document.getElementById('vehicleForm').reset();
+            document.getElementById('vehicle_id').value = '';
             modal.classList.remove('hidden');
         });
 
@@ -321,19 +370,144 @@
             modal.classList.add('hidden');
         });
 
-        // Close modal on outside click
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
             }
         });
 
+        // View Modal handling
+        const viewModal = document.getElementById('viewModal');
+        const closeViewModal = document.getElementById('closeViewModal');
+        const closeViewModalBtn = document.getElementById('closeViewModalBtn');
+
+        closeViewModal.addEventListener('click', () => {
+            viewModal.classList.add('hidden');
+        });
+
+        closeViewModalBtn.addEventListener('click', () => {
+            viewModal.classList.add('hidden');
+        });
+
+        viewModal.addEventListener('click', (e) => {
+            if (e.target === viewModal) {
+                viewModal.classList.add('hidden');
+            }
+        });
+
         // Form submit handling
         document.getElementById('vehicleForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            alert('Chức năng lưu xe sẽ được triển khai ở backend!');
-            modal.classList.add('hidden');
+            
+            const formData = new FormData(e.target);
+            
+            // Send AJAX request
+            fetch('../../../php/station/save_vehicle.php', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    modal.classList.add('hidden');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Không thể kết nối đến server!', 'error');
+            });
         });
+
+        // View vehicle detail
+        function viewVehicleDetail(vehicleId) {
+            // Get vehicle data from table row
+            const row = event.target.closest('tr');
+            const cells = row.querySelectorAll('td');
+            
+            document.getElementById('view_license_plate').textContent = cells[0].textContent.trim();
+            document.getElementById('view_vehicle_name').textContent = cells[1].textContent.trim();
+            document.getElementById('view_vehicle_type').textContent = cells[2].textContent.trim();
+            document.getElementById('view_price_day').textContent = cells[3].textContent.trim();
+            document.getElementById('view_price_hour').textContent = cells[4].textContent.trim();
+            document.getElementById('view_rentals').textContent = cells[5].textContent.trim();
+            document.getElementById('view_rating').textContent = cells[6].textContent.trim();
+            
+            const statusHtml = cells[7].querySelector('span').outerHTML;
+            document.getElementById('view_status').innerHTML = statusHtml;
+            
+            viewModal.classList.remove('hidden');
+        }
+
+        // Edit vehicle
+        function editVehicle(vehicleId) {
+            isEditMode = true;
+            currentVehicleId = vehicleId;
+            modalTitle.textContent = 'Chỉnh sửa thông tin xe';
+            
+            // Fetch vehicle data from server
+            fetch(`../../../php/station/get_vehicle.php?vehicle_id=${vehicleId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const vehicle = data.data;
+                        
+                        // Populate form
+                        document.getElementById('vehicle_id').value = vehicle.vehicle_id;
+                        document.getElementById('license_plate').value = vehicle.license_plate;
+                        document.getElementById('vehicle_name').value = vehicle.vehicle_name;
+                        document.getElementById('vehicle_type').value = vehicle.vehicle_type;
+                        document.getElementById('brand').value = vehicle.brand || '';
+                        document.getElementById('model').value = vehicle.model || '';
+                        document.getElementById('year').value = vehicle.year || '';
+                        document.getElementById('seats').value = vehicle.seats || '';
+                        document.getElementById('price_per_day').value = vehicle.price_per_day;
+                        document.getElementById('price_per_hour').value = vehicle.price_per_hour;
+                        document.getElementById('description').value = vehicle.description || '';
+                        document.getElementById('status').value = vehicle.status;
+                        
+                        modal.classList.remove('hidden');
+                    } else {
+                        showNotification(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Không thể tải thông tin xe!', 'error');
+                });
+        }
+
+        // Toggle maintenance status
+        function toggleMaintenance(vehicleId, newStatus) {
+            const statusText = newStatus === 'MAINTENANCE' ? 'chuyển sang bảo trì' : 'kết thúc bảo trì';
+            
+            if (confirm(`Bạn có chắc chắn muốn ${statusText} xe này?`)) {
+                // Send AJAX request to update status
+                fetch('../../../php/station/update_vehicle_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `vehicle_id=${vehicleId}&status=${newStatus}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification(data.message || 'Cập nhật trạng thái thành công!', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification(data.message || 'Có lỗi xảy ra!', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Không thể kết nối đến server!', 'error');
+                });
+            }
+        }
     </script>
 </body>
 

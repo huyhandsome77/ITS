@@ -1,4 +1,8 @@
-<?php session_start(); ?>
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!-- Mobile Menu Overlay -->
 <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
 
