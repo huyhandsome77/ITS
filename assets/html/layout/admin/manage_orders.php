@@ -208,8 +208,8 @@ include '../../../php/admin/xuly_order.php';
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trạm</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Khách hàng</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Xe</th>
-                                    <!-- <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày thuê</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày trả</th> -->
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày thuê</th>
+                                        <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Ngày trả</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Tổng tiền</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Trạng thái</th>
                                     <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Thao tác</th>
@@ -233,15 +233,15 @@ include '../../../php/admin/xuly_order.php';
                                         <div class="text-xs text-gray-500">
                                             <?= htmlspecialchars($order['license_plate']) ?></div>
                                     </td>
-                                    <!-- 
+                                    
                                     <td class="px-4 py-3"><?= date('d/m/Y', strtotime($order['start_date'])) ?></td>
-                                    <td class="px-4 py-3"><?= date('d/m/Y', strtotime($order['end_date'])) ?></td> -->
+                                    <td class="px-4 py-3"><?= date('d/m/Y', strtotime($order['end_date'])) ?></td>
 
                                     <td class="px-4 py-3 font-bold text-green-600">
                                         <?= number_format($order['total_amount'], 0, ',', '.') ?>đ
                                     </td>
 
-                                    <td class="px-4 py-3">
+                                    <td class="whitespace-nowrap overflow-hidden px-4 py-3">
                                         <?php
                                         $statusMap = [
                                             'NEW' => ['Đơn mới', 'bg-blue-100 text-blue-700'],

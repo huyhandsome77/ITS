@@ -226,6 +226,48 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `vehicles`
   ADD CONSTRAINT `vehicles_ibfk_1` FOREIGN KEY (`station_id`) REFERENCES `stations` (`station_id`);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reviews`
+--
+
+CREATE TABLE `reviews` (
+  `review_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `order_id` int NOT NULL,
+  `review_type` enum('VEHICLE','STATION','SERVICE') NOT NULL DEFAULT 'VEHICLE',
+  `rating` int NOT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci,
+  `status` enum('PENDING','APPROVED','REJECTED','HIDDEN') NOT NULL DEFAULT 'PENDING',
+  `report_reason` text COLLATE utf8mb4_unicode_ci,
+  `is_reported` tinyint(1) NOT NULL DEFAULT '0',
+  `admin_note` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`review_id`),
+  KEY `fk_reviews_user` (`user_id`),
+  KEY `fk_reviews_order` (`order_id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_rating` (`rating`),
+  KEY `idx_review_type` (`review_type`),
+  CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_reviews_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
+  CONSTRAINT `chk_rating` CHECK ((`rating` >= 1 AND `rating` <= 5))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `reviews`
+--
+
+INSERT INTO `reviews` (`review_id`, `user_id`, `order_id`, `review_type`, `rating`, `comment`, `status`, `report_reason`, `is_reported`, `admin_note`, `created_at`) VALUES
+(1, 2, 3, 'VEHICLE', 5, 'Xe rất mới và sạch sẽ. Lái êm, tiết kiệm xăng. Nhân viên trạm nhiệt tình, giao xe đúng giờ. Sẽ thuê lại lần sau!', 'APPROVED', NULL, 0, NULL, '2026-01-23 10:30:00'),
+(2, 3, 2, 'STATION', 4, 'Trạm sạch sẽ, tiện lợi. Thủ tục nhanh gọn. Tuy nhiên bãi đỗ hơi nhỏ vào giờ cao điểm.', 'PENDING', NULL, 0, NULL, '2026-01-25 05:00:00'),
+(3, 4, 3, 'VEHICLE', 1, 'Xe như cứt, nhân viên thái độ, lừa đảo khách hàng, web lag vãi l. Không đáng tin cậy!!!', 'APPROVED', 'Ngôn từ xúc phạm, không có cơ sở', 1, NULL, '2026-01-24 08:15:00'),
+(4, 2, 4, 'SERVICE', 5, 'Dịch vụ tuyệt vời, nhân viên nhiệt tình. Giá cả hợp lý!', 'APPROVED', NULL, 0, NULL, '2026-01-22 14:20:00'),
+(5, 3, 5, 'VEHICLE', 3, 'Xe tạm ổn, nhưng có vài xước nhỏ. Giá hơi cao so với chất lượng.', 'PENDING', NULL, 0, NULL, '2026-01-25 09:45:00');
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

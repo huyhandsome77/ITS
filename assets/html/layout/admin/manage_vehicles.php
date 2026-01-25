@@ -208,7 +208,7 @@ $baseUrl = '../../../..';
                                     <td class="px-4 py-3 text-sm font-semibold"><?= htmlspecialchars($vehicle['vehicle_name']) ?></td>
                                     <td class="px-4 py-3 text-sm font-mono"><?= htmlspecialchars($vehicle['license_plate']) ?></td>
                                     <td class="px-4 py-3">
-                                        <span class="px-2 py-1 rounded-full text-xs font-semibold <?= $typeClass ?>">
+                                        <span class="whitespace-nowrap overflow-hidden px-2 py-1 rounded-full text-xs font-semibold <?= $typeClass ?>">
                                             <?= $typeText ?>
                                         </span>
                                     </td>
@@ -218,7 +218,7 @@ $baseUrl = '../../../..';
                                     <td class="px-4 py-3 text-sm"><?= htmlspecialchars($vehicle['station_name'] ?? 'Chưa có') ?></td>
                                     <td class="px-4 py-3 text-sm font-semibold"><?= number_format($vehicle['price_per_day']) ?>đ</td>
                                     <td class="px-4 py-3">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $statusClass ?>">
+                                        <span class="whitespace-nowrap overflow-hidden px-3 py-1 rounded-full text-xs font-semibold <?= $statusClass ?>">
                                             <?= $statusText ?>
                                         </span>
                                     </td>
@@ -456,7 +456,7 @@ $baseUrl = '../../../..';
                         </div>
                         <div>
                             <label class="block text-sm font-medium mb-1">Trạng thái *</label>
-                            <select name="status" id="edit_status" required class="w-full border rounded-lg px-4 py-2">
+                            <select name="status" id="edit_status" required class="w-full border rounded-lg px-4 py-2" >
                                 <option value="AVAILABLE">Sẵn sàng</option>
                                 <option value="RENTED">Đang thuê</option>
                                 <option value="MAINTENANCE">Bảo trì</option>
