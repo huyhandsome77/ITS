@@ -38,13 +38,15 @@ if ($check->fetchColumn() > 0) {
     exit;
 }
 
+$managed_station_id = ($role === 'STATION' && !empty($_POST['managed_station_id'])) ? $_POST['managed_station_id'] : null;
+
 // Hash password
 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
 // Insert
 $stmt = $conn->prepare(
-    "INSERT INTO users (full_name, email, phone, password, birthday, role, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO users (full_name, email, phone, password, birthday, role, status, managed_station_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 );
 $stmt->execute([
     $full_name,
@@ -53,7 +55,8 @@ $stmt->execute([
     $hashedPassword,
     $birthday,
     $role,
-    $status
+    $status,
+    $managed_station_id
 ]);
 
 $_SESSION['swal'] = [

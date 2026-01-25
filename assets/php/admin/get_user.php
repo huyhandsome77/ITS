@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/config/Connect_DB.php';
 $id = (int)($_GET['id'] ?? 0);
 
 $stmt = $conn->prepare(
-    "SELECT user_id, full_name, email, phone, role, status, birthday
+    "SELECT user_id, full_name, email, phone, role, status, birthday, managed_station_id
      FROM users WHERE user_id = ?"
 );
 $stmt->execute([$id]);

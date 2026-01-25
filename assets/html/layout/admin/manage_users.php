@@ -129,8 +129,10 @@
                                 <option value="">Tất cả vai trò</option>
                                 <option value="USER" <?= ($_GET['role'] ?? '') == 'USER' ? 'selected' : '' ?>>Người dùng
                                 </option>
-                                <option value="MANAGEMENT"
-                                    <?= ($_GET['role'] ?? '') == 'MANAGEMENT' ? 'selected' : '' ?>>Quản lý trạm</option>
+                                <option value="STATION"
+                                    <?= ($_GET['role'] ?? '') == 'STATION' ? 'selected' : '' ?>>Quản lý trạm</option>
+                                <option value="DISPATCHER"
+                                    <?= ($_GET['role'] ?? '') == 'DISPATCHER' ? 'selected' : '' ?>>Điều phối viên</option>
                                 <option value="ADMIN" <?= ($_GET['role'] ?? '') == 'ADMIN' ? 'selected' : '' ?>>Admin
                                 </option>
                             </select>
@@ -358,10 +360,21 @@
 
                     <div>
                         <label class="block text-sm font-semibold mb-2">Vai trò *</label>
-                        <select name="role" required class="w-full border rounded-lg px-4 py-2">
+                        <select name="role" id="add_role" required class="w-full border rounded-lg px-4 py-2">
                             <option value="USER">Người dùng</option>
-                            <option value="MANAGEMENT">Quản lý trạm</option>
+                            <option value="STATION">Quản lý trạm</option>
+                            <option value="DISPATCHER">Điều phối viên</option>
                             <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <div id="add_station_div" class="hidden">
+                        <label class="block text-sm font-semibold mb-2">Chọn trạm quản lý *</label>
+                        <select name="managed_station_id" class="w-full border rounded-lg px-4 py-2">
+                            <option value="">-- Chọn trạm --</option>
+                            <?php foreach ($stations as $s): ?>
+                                <option value="<?= $s['station_id'] ?>"><?= htmlspecialchars($s['station_name']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -437,7 +450,18 @@
                         <select name="role" id="edit_role" class="w-full border rounded-lg px-4 py-2">
                             <option value="USER">Người dùng</option>
                             <option value="STATION">Quản lý trạm</option>
+                            <option value="DISPATCHER">Điều phối viên</option>
                             <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    <div id="edit_station_div" class="hidden">
+                        <label class="block text-sm font-semibold mb-2">Chọn trạm quản lý</label>
+                        <select name="managed_station_id" id="edit_managed_station_id" class="w-full border rounded-lg px-4 py-2">
+                            <option value="">-- Chọn trạm --</option>
+                            <?php foreach ($stations as $s): ?>
+                                <option value="<?= $s['station_id'] ?>"><?= htmlspecialchars($s['station_name']) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -561,6 +585,19 @@
                         </div>
                     </div>
 
+                    <!-- Managed Station -->
+                    <div id="viewManagedStationDiv" class="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow hidden">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-indigo-100 rounded-lg p-2">
+                                <span class="text-xl">🏢</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Trạm quản lý</p>
+                                <p id="viewManagedStation" class="text-sm font-semibold text-gray-800"></p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Status -->
                     <div class="bg-gray-50 rounded-xl p-4 hover:shadow-md transition-shadow">
                         <div class="flex items-center gap-3">
@@ -635,8 +672,26 @@
     const closeModal = document.getElementById('closeModal');
     const cancelBtn = document.getElementById('cancelBtn');
 
+    // Toggle Station Dropdown Logic
+    const addRole = document.getElementById('add_role');
+    const addStationDiv = document.getElementById('add_station_div');
+    const editRole = document.getElementById('edit_role');
+    const editStationDiv = document.getElementById('edit_station_div');
+
+    function toggleStationSelect(select, div) {
+        if (select.value === 'STATION') {
+            div.classList.remove('hidden');
+        } else {
+            div.classList.add('hidden');
+        }
+    }
+
+    addRole.addEventListener('change', () => toggleStationSelect(addRole, addStationDiv));
+    editRole.addEventListener('change', () => toggleStationSelect(editRole, editStationDiv));
+
     btnAddUser.addEventListener('click', () => {
         modal.classList.remove('hidden');
+        toggleStationSelect(addRole, addStationDiv); // Reset state
     });
 
     closeModal.addEventListener('click', () => {
@@ -665,6 +720,16 @@
                 document.getElementById('edit_role').value = data.role;
                 document.getElementById('edit_status').value = data.status;
                 document.getElementById('edit_birthday').value = data.birthday ?? '';
+                
+                // Managed Station
+                if(data.managed_station_id) {
+                    document.getElementById('edit_managed_station_id').value = data.managed_station_id;
+                } else {
+                    document.getElementById('edit_managed_station_id').value = "";
+                }
+
+                // Trigger toggle
+                toggleStationSelect(document.getElementById('edit_role'), editStationDiv);
 
                 document.getElementById('editUserModal').classList.remove('hidden');
             });
@@ -751,6 +816,15 @@
                 document.getElementById('viewCreatedAt').innerText =
                     new Date(user.created_at).toLocaleDateString('vi-VN');
 
+                // Managed Station
+                const viewStationDiv = document.getElementById('viewManagedStationDiv');
+                if (user.managed_station_name) {
+                    document.getElementById('viewManagedStation').innerText = user.managed_station_name;
+                    viewStationDiv.classList.remove('hidden');
+                } else {
+                    viewStationDiv.classList.add('hidden');
+                }
+
                 document.getElementById('viewUserModal').classList.remove('hidden');
             });
     }
@@ -758,6 +832,65 @@
     function closeViewModal() {
         document.getElementById('viewUserModal').classList.add('hidden');
     }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php
+    if (isset($_SESSION['swal'])):
+            $swal = $_SESSION['swal'];
+            unset($_SESSION['swal']);
+        ?>
+    <script>
+    Swal.fire({
+        icon: '<?= $swal['type'] ?>',
+        title: '<?= $swal['title'] ?>',
+        text: '<?= $swal['text'] ?>',
+        confirmButtonText: 'OK'
+    });
+    </script>
+    <?php endif; ?>
+    <script>
+    document.getElementById('userForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Xác nhận',
+            text: 'Bạn có chắc muốn thêm người dùng này?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Lưu',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                e.target.submit();
+            }
+        });
+    });
+    </script>
+    <script>
+    document.getElementById('editUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Form này dùng FormData, không phải e.target.submit() trực tiếp vì code cũ dùng fetch?
+        // Ah, code cũ dùng fetch. Check lại code cũ. 
+        // Oh wait, code cũ:
+        // document.getElementById('editUserForm').addEventListener('submit', function(e) {
+        // e.preventDefault();
+        // fetch('/ITS/assets/php/admin/update_user.php', { method: 'POST', body: new FormData(this)
+        
+        // I need to make sure I don't break the fetch logic if I replaced everything.
+        // My replacement above includes "function editUser" ... "function closeViewModal".
+        // BUT I replaced up to line 800 which was the start of the `editUserForm` listener.
+        // So I effectively REMOVED the listener body in my replacement string??
+        // Let me check the TargetContent.
+        
+        // Wait, the ReplacementContent ends with fetch logic? No, it ends with `closeViewModal`. 
+        // The original code had `editUserForm` listener AFTER `closeViewModal`.
+        // My replacement replaces `btnAddUser.addEventListener` ... `closeViewModal`.
+        // So I am REPLACING the specific block handling open/close/edit logic, BUT adding the toggle logic inside.
+        // The listener for `editUserForm` was at lines 795+ which is likely NOT included in my TargetContent range if I target correctly.
+        
+        // Let's verify existing block range.
+        
+    });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <?php

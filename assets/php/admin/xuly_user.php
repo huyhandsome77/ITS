@@ -16,6 +16,7 @@ function roleLabel($role) {
     return match ($role) {
         'ADMIN' => ['Admin', 'bg-red-100 text-red-700'],
         'STATION' => ['Quản lý trạm', 'bg-purple-100 text-purple-700'],
+        'DISPATCHER' => ['Điều phối viên', 'bg-yellow-100 text-yellow-700'],
         default => ['Người dùng', 'bg-blue-100 text-blue-700'],
     };
 }
@@ -114,3 +115,6 @@ $users = $stmt->fetchAll();
 
 $from = $totalUsers > 0 ? $offset + 1 : 0;
 $to   = min($offset + $limit, $totalUsers);
+
+/* ================== LẤY DANH SÁCH TRẠM (CHO DROPDOWN) ================== */
+$stations = $conn->query("SELECT station_id, station_name FROM stations WHERE status = 'ACTIVE' ORDER BY station_name")->fetchAll();

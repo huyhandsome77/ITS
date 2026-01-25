@@ -245,11 +245,18 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="bg-green-50 text-green-600 px-2 py-1 rounded">🛵 ${s.bikes} xe máy</span>
         </div>
         <p class="text-sm text-gray-600 mb-3">📏 Cách bạn: <b>${distStr}</b></p>
-        <button onclick="window.openGoogleMapsDirection(${s.lat}, ${s.lng})" 
-          class="mt-auto w-full px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg"
-          style="background-color: rgb(0, 102, 102); font-size: 14px;">
-          🧭 Chỉ đường
-        </button>
+        <div class="flex gap-2 mt-auto">
+          <button onclick="window.openGoogleMapsDirection(${s.lat}, ${s.lng})" 
+            class="flex-1 px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg flex items-center justify-center gap-1"
+            style="background-color: rgb(0, 102, 102); font-size: 14px;">
+            🧭 Chỉ đường
+          </button>
+          <a href="../assets/html/layout/user/list_car.php?station_id=${s.id}" 
+            class="flex-1 px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg flex items-center justify-center gap-1 block text-center"
+            style="background-color: rgb(0, 102, 102); font-size: 14px;">
+            🚗 Đặt xe
+          </a>
+        </div>
       `;
       stationList.appendChild(card);
     });
