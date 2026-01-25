@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const citySelect = document.getElementById("citySelect");
   const districtSelect = document.getElementById("districtSelect");
   const addressInput = document.getElementById("addressInput");
+  const geoBtn = document.getElementById("geoBtn");
   const stationList = document.getElementById("stationList");
   const stationCards = document.querySelectorAll(".station-card");
   const searchBtn = document.getElementById("searchStationBtn");
@@ -12,49 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
   let userLocation = null;
   let hasSearched = false;
 
-  console.log("🚀 Station Search Script Loaded");
-  console.log("Found elements:", { 
-    citySelect: !!citySelect, 
-    districtSelect: !!districtSelect, 
-    stationList: !!stationList,
-    searchBtn: !!searchBtn,
-    stationCards: stationCards.length 
-  });
+  console.log("🚀 SCRIPT LOADED");
 
-  // Guard check
-  if (!citySelect || !districtSelect || !stationList) {
-    console.error("❌ Missing required DOM elements");
-    return;
-  }
+  /************ PARSE STATIONS ************/
+  // Read from DOM only ONCE
+  const allStations = Array.from(stationCards).map(card => ({
+    id: card.dataset.id,
+    name: card.dataset.name,
+    address: card.dataset.address,
+    city: card.dataset.city,
+    district: card.dataset.district,
+    lat: parseFloat(card.dataset.lat),
+    lng: parseFloat(card.dataset.lng),
+    cars: card.dataset.cars,
+    bikes: card.dataset.bikes
+  })).filter(s => !isNaN(s.lat) && !isNaN(s.lng));
 
-  if (stationCards.length === 0) {
-    console.error("❌ No station cards found!");
-    if (stationList) {
-      stationList.innerHTML = '<div class="col-span-full text-center py-8 text-red-500">⚠️ Không tìm thấy dữ liệu trạm. Kiểm tra get_station.php</div>';
-    }
-    return;
-  }
+  console.log(`✅ Loaded ${allStations.length} stations with coordinates.`);
 
-  /************ BUILD CITY / DISTRICT FROM DB ************/
+  /************ INIT FILTERS ************/
   const locationMap = {};
-  stationCards.forEach(card => {
-    const c = card.dataset.city;
-    const d = card.dataset.district;
-    
-    console.log("Station:", card.dataset.name, "City:", c, "District:", d);
-    
-    if (!c || !d) {
-      console.warn("⚠️ Missing city/district for:", card.dataset.name);
-      return;
-    }
-    
-    if (!locationMap[c]) locationMap[c] = new Set();
-    locationMap[c].add(d);
+  allStations.forEach(s => {
+    if (!locationMap[s.city]) locationMap[s.city] = new Set();
+    locationMap[s.city].add(s.district);
   });
 
-  console.log("📍 Location Map:", locationMap);
-
-  // Populate city dropdown
   Object.keys(locationMap).sort().forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
@@ -62,260 +45,256 @@ document.addEventListener("DOMContentLoaded", () => {
     citySelect.appendChild(opt);
   });
 
-  /************ GEOCODE ************/
-  async function geocode(address) {
-    try {
-      const url =
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/` +
-        `${encodeURIComponent(address)}.json?limit=1&country=VN&access_token=${MAPBOX_TOKEN}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (!data.features?.length) return null;
-      const [lng, lat] = data.features[0].center;
-      return { lat, lng };
-    } catch (error) {
-      console.error("Geocoding error:", error);
-      return null;
-    }
-  }
-
-  /************ DISTANCE ************/
-  function calcDistance(lat1, lng1, lat2, lng2) {
-    const R = 6371;
-    const toRad = x => x * Math.PI / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const h =
-      Math.sin(dLat/2)**2 +
-      Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h));
-  }
-
-  /************ TOGGLE SEARCH BUTTON ************/
-  function toggleSearchButton() {
-    if (!searchBtn) return;
-    
-    const hasSelection = citySelect.value || districtSelect.value;
-    searchBtn.disabled = !hasSelection;
-    console.log("🔘 Search button:", hasSelection ? "enabled" : "disabled");
-  }
-
-  /************ USER ADDRESS ************/
-  if (addressInput) {
-    // Support both 'change' and 'blur' events
-    const handleAddressInput = async () => {
-      const address = addressInput.value.trim();
-      if (!address) {
-        alert("Vui lòng nhập địa chỉ");
-        return;
-      }
-      
-      console.log("📍 Geocoding address:", address);
-      const pos = await geocode(address);
-      
-      if (!pos) {
-        alert("Không tìm thấy địa chỉ. Thử nhập chi tiết hơn (VD: 123 Nguyễn Huệ, Quận 1, TP.HCM)");
-        return;
-      }
-      
-      userLocation = pos;
-      window.userLocation = pos;
-      console.log("✅ User location set:", pos);
-      
-      // Auto re-render if already searched
-      if (hasSearched && (citySelect.value || districtSelect.value)) {
-        renderStations();
-      }
-    };
-
-    addressInput.addEventListener("blur", handleAddressInput);
-    addressInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleAddressInput();
-      }
-    });
-  }
-
-  /************ SELECT EVENTS ************/
+  /************ EVENTS ************/
   citySelect.addEventListener("change", () => {
-    console.log("🏙️ City selected:", citySelect.value);
-    
     districtSelect.innerHTML = `<option value="">-- Chọn Quận / Huyện --</option>`;
-    const selectedCity = citySelect.value;
+    districtSelect.disabled = !citySelect.value;
     
-    if (selectedCity && locationMap[selectedCity]) {
-      districtSelect.disabled = false;
-      Array.from(locationMap[selectedCity]).sort().forEach(d => {
+    if (citySelect.value) {
+      Array.from(locationMap[citySelect.value]).sort().forEach(d => {
         const opt = document.createElement('option');
         opt.value = d;
         opt.textContent = d;
         districtSelect.appendChild(opt);
       });
-    } else {
-      districtSelect.disabled = true;
     }
-    
-    toggleSearchButton();
-    
-    // Clear previous results when changing city
-    if (!hasSearched) {
-      stationList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">👆 Chọn khu vực và nhấn "Tìm trạm" để xem danh sách</div>';
-    }
-  });
-
-  districtSelect.addEventListener("change", () => {
-    console.log("🏘️ District selected:", districtSelect.value);
     toggleSearchButton();
   });
 
-  /************ SEARCH BUTTON CLICK ************/
-  if (searchBtn) {
-    searchBtn.addEventListener("click", () => {
-      console.log("🔍 Search button clicked");
-      hasSearched = true;
-      renderStations();
+  districtSelect.addEventListener("change", toggleSearchButton);
+
+  searchBtn.addEventListener("click", () => {
+    hasSearched = true;
+    renderStations();
+  });
+
+  if (geoBtn) {
+    geoBtn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("Trình duyệt không hỗ trợ Geolocation.");
+        return;
+      }
+      geoBtn.textContent = "⏳";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userLocation = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          };
+          console.log("📍 Got user location:", userLocation);
+          geoBtn.textContent = "🎯";
+          
+          // Reverse geocode to show address (optional, for UX)
+          reverseGeocode(userLocation.lat, userLocation.lng).then(addr => {
+            if(addr) addressInput.value = addr;
+          });
+
+          // Auto search if not searched
+          if (hasSearched) renderStations();
+          else alert("Đã lấy vị trí! Nhấn 'Tìm trạm' để xem kết quả gần nhất.");
+        },
+        (err) => {
+          console.error(err);
+          geoBtn.textContent = "🎯";
+          alert("Không thể lấy vị trí. Vui lòng cấp quyền hoặc nhập tay.");
+        }
+      );
     });
-  } else {
-    console.error("❌ Search button not found!");
   }
 
-  /************ RENDER STATIONS ************/
-  async function renderStations() {
-    console.log("🎨 Rendering stations...");
-    stationList.innerHTML = '<div class="col-span-full text-center py-4 text-gray-500">⏳ Đang tải dữ liệu trạm...</div>';
+  /************ ADDRESS AUTOCOMPLETE ************/
+  if (addressInput) {
+    const suggestionsBox = document.getElementById("suggestions");
 
-    let stations = [];
-    const selectedCity = citySelect.value;
-    const selectedDistrict = districtSelect.value;
+    // Debounce function
+    const debounce = (func, wait) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    };
 
-    console.log("Filters:", { selectedCity, selectedDistrict });
-
-    // Collect and geocode stations
-    for (const card of stationCards) {
-      const cardCity = card.dataset.city;
-      const cardDistrict = card.dataset.district;
-      const cardAddress = card.dataset.address;
-      const cardName = card.dataset.name;
-      const cardId = card.dataset.id;
-      const cardCars = card.dataset.cars || 0;
-      const cardBikes = card.dataset.bikes || 0;
+    // Handle Input
+    addressInput.addEventListener("input", debounce(async (e) => {
+      const query = e.target.value.trim();
       
-      // Filter by selected city/district
-      if (selectedCity && cardCity !== selectedCity) continue;
-      if (selectedDistrict && cardDistrict !== selectedDistrict) continue;
-
-      console.log("Geocoding:", cardName, cardAddress);
-      const pos = await geocode(cardAddress);
-      
-      if (!pos) {
-        console.warn(`⚠️ Could not geocode: ${cardAddress}`);
-        continue;
+      if (query.length < 3) {
+        suggestionsBox.classList.add("hidden");
+        return;
       }
 
-      stations.push({
-        id: cardId,
-        name: cardName,
-        address: cardAddress,
-        city: cardCity,
-        district: cardDistrict,
-        lat: pos.lat,
-        lng: pos.lng,
-        cars: cardCars,
-        bikes: cardBikes
-      });
+      try {
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?country=VN&autocomplete=true&limit=5&access_token=${MAPBOX_TOKEN}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data.features && data.features.length > 0) {
+            renderSuggestions(data.features);
+        } else {
+            suggestionsBox.classList.add("hidden");
+        }
+      } catch (err) {
+        console.error("Autocomplete error:", err);
+      }
+    }, 300));
+
+    // Render Suggestions dropdown
+    function renderSuggestions(features) {
+        suggestionsBox.innerHTML = "";
+        suggestionsBox.classList.remove("hidden");
+
+        features.forEach(feature => {
+            const li = document.createElement("li");
+            li.className = "p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0 text-sm";
+            li.textContent = feature.place_name;
+            
+            li.addEventListener("click", () => {
+                selectAddress(feature);
+            });
+            suggestionsBox.appendChild(li);
+        });
     }
 
-    console.log("✅ Found stations:", stations.length);
-
-    // Sort by distance if user location is set
-    if (userLocation) {
-      stations.sort((a, b) =>
-        calcDistance(userLocation.lat, userLocation.lng, a.lat, a.lng) -
-        calcDistance(userLocation.lat, userLocation.lng, b.lat, b.lng)
-      );
-      console.log("📏 Sorted by distance");
+    // Select Address
+    function selectAddress(feature) {
+        addressInput.value = feature.place_name;
+        suggestionsBox.classList.add("hidden");
+        
+        userLocation = {
+            lat: feature.center[1],
+            lng: feature.center[0]
+        };
+        console.log("📍 User selected location:", userLocation);
+        
+        // Auto render
+        if (hasSearched) renderStations();
     }
 
-    // Clear and render
+    // Hide suggestions when clicking outside
+    document.addEventListener("click", (e) => {
+        if (!addressInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+            suggestionsBox.classList.add("hidden");
+        }
+    });
+
+    // Support Enter key for first suggestion or simple manual confirm
+    addressInput.addEventListener("keypress", async (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            // If suggestions are visible, selecting the first one is often good UX, 
+            // but let's just do a manual geocode if the user hits Enter explicitly.
+            suggestionsBox.classList.add("hidden");
+            const addr = addressInput.value.trim();
+            if(addr) {
+                const pos = await geocode(addr);
+                if(pos) {
+                    userLocation = pos;
+                    if (hasSearched) renderStations();
+                }
+            }
+        }
+    });
+  }
+
+
+  /************ LOGIC ************/
+  function toggleSearchButton() {
+    // Always enable if wants to see all, or enforce selection. 
+    // Let's enforce at least city OR user location to avoid spam? 
+    // Existing logic enforced selection. Let's keep it simple.
+    searchBtn.disabled = false; 
+  }
+
+  function renderStations() {
     stationList.innerHTML = "";
+    
+    const sCity = citySelect.value;
+    const sDistrict = districtSelect.value;
 
-    if (stations.length === 0) {
-      stationList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">❌ Không tìm thấy trạm nào</div>';
+    let filtered = allStations.filter(s => {
+      if (sCity && s.city !== sCity) return false;
+      if (sDistrict && s.district !== sDistrict) return false;
+      return true;
+    });
+
+    if (userLocation) {
+      filtered.forEach(s => {
+        s.distance = calcDistance(userLocation.lat, userLocation.lng, s.lat, s.lng);
+      });
+      filtered.sort((a, b) => a.distance - b.distance);
+    }
+
+    if (filtered.length === 0) {
+      stationList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">❌ Không tìm thấy trạm phù hợp</div>';
       return;
     }
 
-    stations.forEach(s => {
-      // Calculate distance
-      let distanceText = "—";
-      if (userLocation) {
-        const d = calcDistance(
-          userLocation.lat,
-          userLocation.lng,
-          s.lat,
-          s.lng
-        );
-        distanceText = d < 1
-          ? Math.round(d * 1000) + " m"
-          : d.toFixed(2) + " km";
-      }
+    filtered.forEach(s => {
+      const distStr = s.distance 
+        ? (s.distance < 1 ? Math.round(s.distance * 1000) + " m" : s.distance.toFixed(2) + " km")
+        : "—";
 
-      // Create card
       const card = document.createElement("div");
       card.className = "bg-white rounded-xl shadow p-4 flex flex-col hover:shadow-lg transition";
       card.innerHTML = `
         <h4 class="font-bold text-lg mb-1">🏢 ${s.name}</h4>
         <p class="text-sm text-gray-500 mb-2">📍 ${s.address}</p>
         <div class="flex gap-3 text-sm mb-2">
-          <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded">
-            🚗 ${s.cars} ô tô
-          </span>
-          <span class="bg-green-50 text-green-600 px-2 py-1 rounded">
-            🛵 ${s.bikes} xe máy
-          </span>
+          <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded">🚗 ${s.cars} ô tô</span>
+          <span class="bg-green-50 text-green-600 px-2 py-1 rounded">🛵 ${s.bikes} xe máy</span>
         </div>
-        <p class="text-sm text-gray-600 mb-3">
-          📏 Cách bạn: <b>${distanceText}</b>
-        </p>
+        <p class="text-sm text-gray-600 mb-3">📏 Cách bạn: <b>${distStr}</b></p>
+        <button onclick="window.openGoogleMapsDirection(${s.lat}, ${s.lng})" 
+          class="mt-auto w-full px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg"
+          style="background-color: rgb(0, 102, 102); font-size: 14px;">
+          🧭 Chỉ đường
+        </button>
       `;
-
-      // Create button
-      const btn = document.createElement("button");
-      btn.className = "mt-auto w-full px-4 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition";
-      btn.style.background = "#2563eb";
-      btn.textContent = "🧭 Chỉ đường";
-      btn.addEventListener("click", () => {
-        openGoogleMapsDirection(s.lat, s.lng);
-      });
-      
-      card.appendChild(btn);
       stationList.appendChild(card);
     });
-
-    console.log("✅ Rendered", stations.length, "stations");
   }
 
-  /************ OPEN GOOGLE MAPS ************/
-  function openGoogleMapsDirection(lat, lng) {
+  /************ UTILS ************/
+  function calcDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+              Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  async function geocode(address) {
+    try {
+      const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?limit=1&country=VN&access_token=${MAPBOX_TOKEN}`);
+      const data = await res.json();
+      if (data.features?.[0]) {
+        return { lat: data.features[0].center[1], lng: data.features[0].center[0] };
+      }
+    } catch(e) { console.error(e); }
+    return null;
+  }
+
+  async function reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?limit=1&access_token=${MAPBOX_TOKEN}`);
+      const data = await res.json();
+      if (data.features?.[0]) return data.features[0].place_name;
+    } catch(e) { console.error(e); }
+    return null;
+  }
+
+  window.openGoogleMapsDirection = (lat, lng) => {
     if (!userLocation) {
-      alert("Vui lòng nhập địa chỉ của bạn trước khi chỉ đường");
-      return;
+        // Use current location as origin if known, else trigger it
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+    } else {
+        window.open(`https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${lat},${lng}`, "_blank");
     }
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${lat},${lng}`,
-      "_blank"
-    );
-  }
+  };
 
-  // Make it global
-  window.openGoogleMapsDirection = openGoogleMapsDirection;
-
-  // INITIAL STATE
-  toggleSearchButton();
-  if (stationList) {
-    stationList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">👆 Chọn khu vực và nhấn "Tìm trạm" để xem danh sách</div>';
-  }
-
-  console.log("✅ Station Search Script Ready");
-
+  // Initial render empty state
+  stationList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-400">Vui lòng chọn khu vực  bạn muốn tìm trạm</div>';
 });

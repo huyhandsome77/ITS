@@ -47,6 +47,13 @@
 
                 </div>
 
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <a href="/ITS/public/fix_location.php" target="_blank" 
+                       class="px-6 py-3 bg-white border border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-gray-50 shadow-sm flex items-center gap-2">
+                        <span>🗺️</span> Mở bản đồ chỉnh sửa
+                    </a>
+                </div>
+
                 <!-- STATISTICS -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
@@ -163,7 +170,9 @@
                                     <button onclick="openEditStationModal(
                                         <?= $s['station_id'] ?>,
                                         '<?= addslashes($s['station_name']) ?>',
-                                        '<?= addslashes($s['address']) ?>'
+                                        '<?= addslashes($s['address']) ?>',
+                                        '<?= $s['latitude'] ?? '' ?>',
+                                        '<?= $s['longitude'] ?? '' ?>'
                                     )" class="text-yellow-600 hover:text-yellow-800 mx-1" title="Sửa trạm">
                                         <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
                                             <path
@@ -280,6 +289,18 @@
                         </select>
                     </div>
 
+                    <!-- Coordinates -->
+                    <div class="grid grid-cols-2 gap-4 col-span-2 md:col-span-2">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Vĩ độ (Lat)</label>
+                            <input type="number" step="any" name="latitude" class="w-full border rounded-lg px-4 py-2" placeholder="VD: 10.1234">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2">Kinh độ (Lng)</label>
+                            <input type="number" step="any" name="longitude" class="w-full border rounded-lg px-4 py-2" placeholder="VD: 106.1234">
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- ACTION -->
@@ -331,6 +352,16 @@
                             class="w-full border rounded-lg px-4 py-2">
                     </div>
 
+                    <!-- Coordinates -->
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Vĩ độ (Lat)</label>
+                        <input type="number" step="any" name="latitude" id="edit_station_lat" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold mb-2">Kinh độ (Lng)</label>
+                        <input type="number" step="any" name="longitude" id="edit_station_lng" class="w-full border rounded-lg px-4 py-2">
+                    </div>
+
                 </div>
 
                 <!-- ACTION -->
@@ -357,6 +388,8 @@
         document.getElementById('edit_station_id').value = id;
         document.getElementById('edit_station_name').value = name;
         document.getElementById('edit_station_address').value = address ?? '';
+        document.getElementById('edit_station_lat').value = arguments[3] ?? '';
+        document.getElementById('edit_station_lng').value = arguments[4] ?? '';
 
         editStationModal.classList.remove('hidden');
     }

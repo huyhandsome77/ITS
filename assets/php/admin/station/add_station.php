@@ -10,6 +10,8 @@ $address = trim($_POST['address'] ?? '');
 $city = trim($_POST['city'] ?? '');
 $district = trim($_POST['district'] ?? '');
 $is_maintenance = (int)($_POST['is_maintenance'] ?? 0);
+$lat = !empty($_POST['latitude']) ? $_POST['latitude'] : null;
+$lng = !empty($_POST['longitude']) ? $_POST['longitude'] : null;
 
 // ===== VALIDATE =====
 if ($name === '') {
@@ -26,8 +28,8 @@ if ($city === '' || $district === '') {
 
 // ===== INSERT =====
 $stmt = $conn->prepare("
-    INSERT INTO stations (station_name, city, district, address, is_maintenance)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO stations (station_name, city, district, address, is_maintenance, latitude, longitude)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
 ");
 
 $stmt->execute([
@@ -35,7 +37,9 @@ $stmt->execute([
     $city,
     $district,
     $address,
-    $is_maintenance
+    $is_maintenance,
+    $lat,
+    $lng
 ]);
 
 // ===== SUCCESS =====

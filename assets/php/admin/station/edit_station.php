@@ -6,6 +6,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/helpers/flash.php';
 $id = $_POST['station_id'] ?? null;
 $name = trim($_POST['station_name'] ?? '');
 $address = trim($_POST['address'] ?? '');
+$lat = !empty($_POST['latitude']) ? $_POST['latitude'] : null;
+$lng = !empty($_POST['longitude']) ? $_POST['longitude'] : null;
 
 if (!$id || $name === '') {
     setFlashAlert('error', 'Lỗi', 'Dữ liệu không hợp lệ');
@@ -26,10 +28,10 @@ if ($check->fetchColumn()) {
 // Update
 $stmt = $conn->prepare("
     UPDATE stations
-    SET station_name = ?, address = ?
+    SET station_name = ?, address = ?, latitude = ?, longitude = ?
     WHERE station_id = ?
 ");
-$stmt->execute([$name, $address, $id]);
+$stmt->execute([$name, $address, $lat, $lng, $id]);
 
 setFlashAlert('success', 'Thành công', 'Đã cập nhật thông tin trạm');
 header('Location: /ITS/assets/html/layout/admin/manage_stations.php');

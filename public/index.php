@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="../assets/js/index.js" defer></script>
+    <script src="../assets/js/index.js?v=<?= time() ?>" defer></script>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -53,7 +53,8 @@
                             <option value="">-- Chọn Quận / Huyện --</option>
                         </select>
                         <button id="searchStationBtn"
-                            class="px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                            class="px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            style="background-color: rgb(0, 102, 102); font-size: 14px;">
                             🔍 Tìm trạm
                         </button>
                     </div>
@@ -62,8 +63,16 @@
                 <!-- ĐỊA CHỈ USER -->
                 <section class="mb-6">
                     <h3 class="text-2xl font-bold mb-4">🏠 Địa chỉ của bạn</h3>
-                    <input id="addressInput" type="text" placeholder="VD: 12 Nguyễn Huệ, Quận 1"
-                        class="w-full p-3 border rounded-lg">
+                    <div class="flex gap-2 relative">
+                        <div class="flex-1 relative">
+                            <input id="addressInput" type="text" placeholder="VD: 12 Nguyễn Huệ, Quận 1"
+                                class="w-full p-3 border rounded-lg" autocomplete="off">
+                            <ul id="suggestions" class="absolute z-50 bg-white border rounded-lg shadow-lg w-full mt-1 hidden max-h-60 overflow-y-auto"></ul>
+                        </div>
+                        <button id="geoBtn" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-2xl" title="Lấy vị trí hiện tại">
+                            🎯
+                        </button>
+                    </div>
                 </section>
 
                 <!-- DANH SÁCH TRẠM -->
