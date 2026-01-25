@@ -1,3 +1,10 @@
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$baseUrl = '../../../..'; 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/admin/xuly_statistics.php';
+?>
 <!doctype html>
 <html lang="vi" class="h-full">
 
@@ -14,8 +21,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
-<?php $baseUrl = '../../../..'; ?>
 
 <body class="min-h-full font-[Inter]">
     <div id="app" class="flex min-h-screen">
@@ -35,12 +40,14 @@
                         <h1 class="text-3xl font-bold" style="color: var(--primary-color);">THỐNG KÊ</h1>
                     </div>
                     <div class="flex space-x-3">
-                        <select class="border rounded-lg px-4 py-2 text-sm">
-                            <option>Tháng này</option>
-                            <option>Tháng trước</option>
-                            <option>Quý này</option>
-                            <option>Năm nay</option>
-                        </select>
+                        <form method="GET" action="" class="flex space-x-3">
+                            <select name="period" class="border rounded-lg px-4 py-2 text-sm" onchange="this.form.submit()">
+                                <option value="current_month" <?= $period === 'current_month' ? 'selected' : '' ?>>Tháng này</option>
+                                <option value="last_month" <?= $period === 'last_month' ? 'selected' : '' ?>>Tháng trước</option>
+                                <option value="current_quarter" <?= $period === 'current_quarter' ? 'selected' : '' ?>>Quý này</option>
+                                <option value="current_year" <?= $period === 'current_year' ? 'selected' : '' ?>>Năm nay</option>
+                            </select>
+                        </form>
                         <button class="px-4 py-2 rounded-lg text-white font-semibold text-sm" style="background: var(--primary-color);">
                             <svg class="w-4 h-4 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -56,8 +63,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-blue-100 text-sm">Doanh thu tháng</p>
-                                <h3 class="text-3xl font-bold mt-1">2.4 tỷ</h3>
-                                <p class="text-blue-100 text-xs mt-1">↑ 18.3% so với T12</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= formatRevenue($currentRevenue) ?></h3>
+                                <p class="text-blue-100 text-xs mt-1"><?= $revenueGrowthText ?> so với kỳ trước</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -72,8 +79,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-green-100 text-sm">Tổng đơn hàng</p>
-                                <h3 class="text-3xl font-bold mt-1">3,107</h3>
-                                <p class="text-green-100 text-xs mt-1">154 đơn hôm nay</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= number_format($totalOrders) ?></h3>
+                                <p class="text-green-100 text-xs mt-1"><?= $todayOrders ?> đơn hôm nay</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -88,8 +95,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-purple-100 text-sm">Tỷ lệ xe hoạt động</p>
-                                <h3 class="text-3xl font-bold mt-1">90.2%</h3>
-                                <p class="text-purple-100 text-xs mt-1">313/347 xe</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= $vehicleUtilization ?>%</h3>
+                                <p class="text-purple-100 text-xs mt-1"><?= $activeVehicles ?>/<?= $totalVehicles ?> xe</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -104,8 +111,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-yellow-100 text-sm">Đánh giá TB</p>
-                                <h3 class="text-3xl font-bold mt-1">4.6 ⭐</h3>
-                                <p class="text-yellow-100 text-xs mt-1">Từ 2,847 đánh giá</p>
+                                <h3 class="text-3xl font-bold mt-1"><?= $avgRating ?> ⭐</h3>
+                                <p class="text-yellow-100 text-xs mt-1">Từ <?= number_format($totalReviews) ?> đánh giá</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -173,75 +180,37 @@
                     <section class="bg-white rounded-2xl shadow-sm border p-5">
                         <h2 class="text-lg font-semibold mb-4">Top 5 xe được thuê nhiều nhất</h2>
                         <div class="space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg border-l-4 border-yellow-500">
+                            <?php 
+                            $badges = [
+                                1 => ['bg' => 'from-yellow-50 to-yellow-100', 'border' => 'border-yellow-500', 'badge' => 'bg-yellow-500'],
+                                2 => ['bg' => 'from-gray-50 to-gray-100', 'border' => 'border-gray-400', 'badge' => 'bg-gray-400'],
+                                3 => ['bg' => 'from-orange-50 to-orange-100', 'border' => 'border-orange-500', 'badge' => 'bg-orange-500'],
+                                4 => ['bg' => 'bg-gray-50', 'border' => '', 'badge' => 'bg-gray-300 text-gray-700'],
+                                5 => ['bg' => 'bg-gray-50', 'border' => '', 'badge' => 'bg-gray-300 text-gray-700']
+                            ];
+                            
+                            foreach ($topVehicles as $index => $vehicle):
+                                $rank = $index + 1;
+                                $style = $badges[$rank];
+                            ?>
+                            <div class="flex items-center justify-between p-3 bg-gradient-to-r <?= $style['bg'] ?> rounded-lg <?= $style['border'] ? 'border-l-4 ' . $style['border'] : '' ?>">
                                 <div class="flex items-center space-x-3">
-                                    <span class="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center font-bold text-sm">1</span>
+                                    <span class="w-8 h-8 rounded-full <?= $style['badge'] ?> text-white flex items-center justify-center font-bold text-sm"><?= $rank ?></span>
                                     <div>
-                                        <div class="font-semibold text-sm">Toyota Camry 2023</div>
-                                        <div class="text-xs text-gray-600">51G-12345 • Nguyễn Huệ - Q1</div>
+                                        <div class="font-semibold text-sm"><?= htmlspecialchars($vehicle['vehicle_name']) ?></div>
+                                        <div class="text-xs text-gray-600"><?= htmlspecialchars($vehicle['license_plate']) ?> • <?= htmlspecialchars($vehicle['station_name'] ?? 'N/A') ?></div>
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-bold text-sm">87 lượt</div>
-                                    <div class="text-xs text-gray-500">94% thời gian</div>
+                                    <div class="font-bold text-sm"><?= $vehicle['rental_count'] ?> lượt</div>
+                                    <div class="text-xs text-gray-500"><?= $vehicle['usage_percent'] ?>% thời gian</div>
                                 </div>
                             </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-l-4 border-gray-400">
-                                <div class="flex items-center space-x-3">
-                                    <span class="w-8 h-8 rounded-full bg-gray-400 text-white flex items-center justify-center font-bold text-sm">2</span>
-                                    <div>
-                                        <div class="font-semibold text-sm">Honda CR-V 2023</div>
-                                        <div class="text-xs text-gray-600">51H-67890 • Lê Lợi - Q1</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-sm">76 lượt</div>
-                                    <div class="text-xs text-gray-500">89% thời gian</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg border-l-4 border-orange-500">
-                                <div class="flex items-center space-x-3">
-                                    <span class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm">3</span>
-                                    <div>
-                                        <div class="font-semibold text-sm">Mazda CX-5 2022</div>
-                                        <div class="text-xs text-gray-600">51M-24680 • Võ Văn Tần - Q3</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-sm">68 lượt</div>
-                                    <div class="text-xs text-gray-500">85% thời gian</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <span class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center font-bold text-sm">4</span>
-                                    <div>
-                                        <div class="font-semibold text-sm">Ford Tourneo 2021</div>
-                                        <div class="text-xs text-gray-600">51F-13579 • Nguyễn Huệ - Q1</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-sm">62 lượt</div>
-                                    <div class="text-xs text-gray-500">81% thời gian</div>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <span class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center font-bold text-sm">5</span>
-                                    <div>
-                                        <div class="font-semibold text-sm">VinFast VF8 2024</div>
-                                        <div class="text-xs text-gray-600">51V-98765 • Hoàng Văn Thụ - TB</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="font-bold text-sm">58 lượt</div>
-                                    <div class="text-xs text-gray-500">78% thời gian</div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
+                            
+                            <?php if (empty($topVehicles)): ?>
+                                <p class="text-center text-gray-500 py-4">Chưa có dữ liệu</p>
+                            <?php endif; ?>
                         </div>
                     </section>
 
@@ -256,27 +225,27 @@
                                     <span class="text-sm text-gray-600">1-3 ngày</span>
                                     <div class="flex items-center space-x-2 flex-1 max-w-xs">
                                         <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: <?= $shortTermPercent ?>%"></div>
                                         </div>
-                                        <span class="text-sm font-semibold text-gray-700">65%</span>
+                                        <span class="text-sm font-semibold text-gray-700"><?= $shortTermPercent ?>%</span>
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-gray-600">4-7 ngày</span>
                                     <div class="flex items-center space-x-2 flex-1 max-w-xs">
                                         <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                            <div class="bg-green-500 h-2 rounded-full" style="width: 25%"></div>
+                                            <div class="bg-green-500 h-2 rounded-full" style="width: <?= $mediumTermPercent ?>%"></div>
                                         </div>
-                                        <span class="text-sm font-semibold text-gray-700">25%</span>
+                                        <span class="text-sm font-semibold text-gray-700"><?= $mediumTermPercent ?>%</span>
                                     </div>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-sm text-gray-600">Trên 7 ngày</span>
                                     <div class="flex items-center space-x-2 flex-1 max-w-xs">
                                         <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                            <div class="bg-purple-500 h-2 rounded-full" style="width: 10%"></div>
+                                            <div class="bg-purple-500 h-2 rounded-full" style="width: <?= $longTermPercent ?>%"></div>
                                         </div>
-                                        <span class="text-sm font-semibold text-gray-700">10%</span>
+                                        <span class="text-sm font-semibold text-gray-700"><?= $longTermPercent ?>%</span>
                                     </div>
                                 </div>
                             </div>
@@ -319,7 +288,7 @@
                             <h3 class="text-sm font-semibold text-gray-700 mb-3">Khách hàng trung thành</h3>
                             <div class="flex items-center justify-between p-3 bg-gradient-to-r from-teal-50 to-teal-100 rounded-lg border border-teal-200">
                                 <div>
-                                    <div class="text-2xl font-bold text-teal-700">342</div>
+                                    <div class="text-2xl font-bold text-teal-700"><?= number_format($loyalCustomers) ?></div>
                                     <div class="text-xs text-teal-600">Khách hàng thuê trên 5 lần</div>
                                 </div>
                                 <svg class="w-10 h-10 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
@@ -346,59 +315,28 @@
                                     <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700">Hiệu suất</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y">
+                            <tbody class="divide-y divide-gray-200">
+                                <?php foreach ($stationPerformance as $station): ?>
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-semibold">Nguyễn Huệ - Q1</td>
-                                    <td class="px-4 py-3 text-center text-sm">95</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold">847</td>
-                                    <td class="px-4 py-3 text-center text-sm font-bold text-green-600">780M</td>
+                                    <td class="px-4 py-3 text-sm font-semibold"><?= htmlspecialchars($station['station_name']) ?></td>
+                                    <td class="px-4 py-3 text-center text-sm"><?= $station['total_vehicles'] ?></td>
+                                    <td class="px-4 py-3 text-center text-sm font-semibold"><?= $station['total_orders'] ?></td>
+                                    <td class="px-4 py-3 text-center text-sm font-bold text-green-600"><?= formatRevenue($station['revenue']) ?></td>
                                     <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">92%</span>
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $station['performance']['class'] ?>"><?= $station['utilization_rate'] ?>%</span>
                                     </td>
-                                    <td class="px-4 py-3 text-center text-sm">4.8 ⭐</td>
+                                    <td class="px-4 py-3 text-center text-sm"><?= number_format($station['avg_rating'], 1) ?> ⭐</td>
                                     <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Xuất sắc</span>
+                                        <span class="px-3 py-1 rounded-full text-xs font-semibold <?= $station['performance']['class'] ?>"><?= $station['performance']['label'] ?></span>
                                     </td>
                                 </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-semibold">Lê Lợi - Q1</td>
-                                    <td class="px-4 py-3 text-center text-sm">82</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold">723</td>
-                                    <td class="px-4 py-3 text-center text-sm font-bold text-green-600">650M</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">89%</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center text-sm">4.7 ⭐</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Tốt</span>
-                                    </td>
+                                <?php endforeach; ?>
+                                
+                                <?php if (empty($stationPerformance)): ?>
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">Chưa có dữ liệu</td>
                                 </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-semibold">Võ Văn Tần - Q3</td>
-                                    <td class="px-4 py-3 text-center text-sm">76</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold">654</td>
-                                    <td class="px-4 py-3 text-center text-sm font-bold text-green-600">580M</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">86%</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center text-sm">4.5 ⭐</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Khá</span>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-4 py-3 text-sm font-semibold">Hoàng Văn Thụ - TB</td>
-                                    <td class="px-4 py-3 text-center text-sm">94</td>
-                                    <td class="px-4 py-3 text-center text-sm font-semibold">883</td>
-                                    <td class="px-4 py-3 text-center text-sm font-bold text-green-600">390M</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">75%</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center text-sm">4.3 ⭐</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">Trung bình</span>
-                                    </td>
-                                </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
@@ -417,10 +355,10 @@
         new Chart(userGrowthCtx, {
             type: 'line',
             data: {
-                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                labels: <?= json_encode($userMonths) ?>,
                 datasets: [{
                     label: 'Tổng người dùng',
-                    data: [850, 892, 924, 968, 1010, 1056, 1098, 1142, 1180, 1205, 1223, 1247],
+                    data: <?= json_encode($userCounts) ?>,
                     borderColor: '#8b5cf6',
                     backgroundColor: 'rgba(139, 92, 246, 0.1)',
                     tension: 0.4,
@@ -448,10 +386,10 @@
         new Chart(bookingByDayCtx, {
             type: 'bar',
             data: {
-                labels: ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN'],
+                labels: <?= json_encode($dayLabels) ?>,
                 datasets: [{
                     label: 'Số đơn đặt',
-                    data: [387, 412, 398, 425, 568, 647, 534],
+                    data: <?= json_encode($bookingCounts) ?>,
                     backgroundColor: [
                         '#3b82f6',
                         '#3b82f6',
@@ -484,9 +422,9 @@
         new Chart(vehicleTypeCtx, {
             type: 'pie',
             data: {
-                labels: ['Sedan', 'SUV', 'MPV', 'Hatchback', 'Pickup'],
+                labels: <?= json_encode($vehicleTypeLabels) ?>,
                 datasets: [{
-                    data: [1247, 982, 678, 534, 289],
+                    data: <?= json_encode($vehicleTypeCounts) ?>,
                     backgroundColor: [
                         '#3b82f6',
                         '#10b981',
@@ -507,7 +445,7 @@
             }
         });
 
-        // Payment Method Distribution - Doughnut chart
+        // Payment Method Distribution - Doughnut chart (static data)
         const paymentMethodCtx = document.getElementById('paymentMethodChart').getContext('2d');
         new Chart(paymentMethodCtx, {
             type: 'doughnut',
@@ -539,16 +477,16 @@
         new Chart(stationComparisonCtx, {
             type: 'bar',
             data: {
-                labels: ['Nguyễn Huệ - Q1', 'Lê Lợi - Q1', 'Võ Văn Tần - Q3', 'Hoàng Văn Thụ - TB'],
+                labels: <?= json_encode($stationNames) ?>,
                 datasets: [
                     {
                         label: 'Doanh thu (triệu)',
-                        data: [780, 650, 580, 390],
+                        data: <?= json_encode($stationRevenues) ?>,
                         backgroundColor: '#006666'
                     },
                     {
                         label: 'Số đơn',
-                        data: [847, 723, 654, 883],
+                        data: <?= json_encode($stationOrders) ?>,
                         backgroundColor: '#8b5cf6'
                     }
                 ]

@@ -1,3 +1,10 @@
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$baseUrl = '../../../..'; 
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/admin/xuly_review.php';
+?>
 <!doctype html>
 <html lang="vi" class="h-full">
 
@@ -13,12 +20,6 @@
     <link rel="stylesheet" href="../../../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<?php 
-session_start();
-$baseUrl = '../../../..'; 
-require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/admin/xuly_review.php';
-?>
 
 <body class="min-h-full font-[Inter]">
     <div id="app" class="flex min-h-screen">
