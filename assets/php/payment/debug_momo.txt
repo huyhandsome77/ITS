@@ -1,0 +1,48 @@
+Array
+(
+    [partnerCode] => MOMOBKUN20180529
+    [orderId] => DH13ACA
+    [requestId] => DH13ACA-1769452210
+    [amount] => 240000
+    [orderInfo] => Thanh toan don hang DH13ACA
+    [orderType] => momo_wallet
+    [transId] => 4655069170
+    [resultCode] => 0
+    [message] => Thành công.
+    [payType] => aio_qr
+    [responseTime] => 1769452237713
+    [extraData] => 
+    [signature] => 1ba263661c8f16503373dcfbf068dd14725bec9e78ebfdf33fd9e042aed5a54c
+)
+Array
+(
+    [partnerCode] => MOMOBKUN20180529
+    [orderId] => DH18F7E
+    [requestId] => DH18F7E-1769452386
+    [amount] => 4000000
+    [orderInfo] => Thanh toan don hang DH18F7E
+    [orderType] => momo_wallet
+    [transId] => 4655050356
+    [resultCode] => 0
+    [message] => Thành công.
+    [payType] => aio_qr
+    [responseTime] => 1769452409638
+    [extraData] => 
+    [signature] => 7c692cc0756ea6fb2b44ba7e9e630acb43f3cd8b2ade69d0cb6989022f7866a4
+)
+Array
+(
+    [partnerCode] => MOMOBKUN20180529
+    [orderId] => DHED03E
+    [requestId] => DHED03E-1769452859
+    [amount] => 600000
+    [orderInfo] => Thanh toan don hang DHED03E
+    [orderType] => momo_wallet
+    [transId] => 4655080429
+    [resultCode] => 0
+    [message] => Thành công.
+    [payType] => aio_qr
+    [responseTime] => 1769452901745
+    [extraData] => 
+    [signature] => 06909d0ba9eec96d2b6b9e30b29861acca9c1b6ef419fa8d08c8f42720120683
+)

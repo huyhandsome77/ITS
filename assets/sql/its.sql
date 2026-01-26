@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 25, 2026 at 02:58 PM
+-- Generation Time: Jan 26, 2026 at 07:24 PM
 -- Server version: 8.0.40
 -- PHP Version: 8.2.12
 
@@ -34,10 +34,13 @@ CREATE TABLE `orders` (
   `user_id` int NOT NULL,
   `vehicle_id` int NOT NULL,
   `start_date` date NOT NULL,
+  `start_time` time DEFAULT '00:00:00',
   `end_date` date NOT NULL,
+  `end_time` time DEFAULT '00:00:00',
   `actual_return_date` datetime DEFAULT NULL,
   `total_amount` decimal(12,0) NOT NULL,
   `notes` text COLLATE utf8mb4_unicode_ci,
+  `payment_method` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'CASH',
   `status` enum('NEW','RENTING','WAITING_RETURN','COMPLETED','CANCELLED') COLLATE utf8mb4_unicode_ci DEFAULT 'NEW',
   `cancel_reason` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cancelled_at` datetime DEFAULT NULL,
@@ -49,18 +52,48 @@ CREATE TABLE `orders` (
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `order_code`, `station_id`, `user_id`, `vehicle_id`, `start_date`, `end_date`, `actual_return_date`, `total_amount`, `notes`, `status`, `cancel_reason`, `cancelled_at`, `completed_at`, `created_at`) VALUES
-(1, 'DH001', 1, 2, 1, '2026-01-07', '2026-01-10', NULL, 3600000, NULL, 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(2, 'DH002', 2, 3, 2, '2026-01-05', '2026-01-12', NULL, 10500000, NULL, 'RENTING', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(3, 'DH003', 3, 4, 3, '2026-01-01', '2026-01-10', NULL, 16200000, NULL, 'COMPLETED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(4, 'DH004', 1, 2, 4, '2026-01-15', '2026-01-16', NULL, 900000, NULL, 'COMPLETED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(5, 'DH005', 4, 3, 5, '2026-01-18', '2026-01-18', NULL, 150000, NULL, 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(6, 'DH006', 2, 2, 6, '2026-01-20', '2026-01-20', NULL, 200000, NULL, 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
-(32, 'DH007', 1, 2, 1, '2026-01-10', '2026-01-12', '2026-01-12 09:00:00', 1200000, 'Khách trả xe sạch sẽ', 'COMPLETED', NULL, NULL, '2026-01-12 09:15:00', '2026-01-08 07:00:00'),
-(33, 'DH008', 2, 3, 2, '2026-01-20', '2026-01-25', NULL, 4500000, 'Thuê đi công tác', 'RENTING', NULL, NULL, NULL, '2026-01-19 02:15:00'),
-(34, 'DH009', 1, 4, 3, '2026-01-22', '2026-01-23', NULL, 500000, NULL, 'CANCELLED', 'Tài khoản người dùng bị khóa', '2026-01-22 10:00:00', NULL, '2026-01-21 01:00:00'),
-(35, 'DH010', 3, 2, 4, '2026-02-01', '2026-02-05', NULL, 3000000, 'Đặt trước cho kỳ nghỉ', 'NEW', NULL, NULL, NULL, '2026-01-24 01:00:00'),
-(36, 'DH011', 2, 3, 1, '2026-01-18', '2026-01-22', NULL, 2000000, 'Khách chưa thấy liên hệ', 'WAITING_RETURN', NULL, NULL, NULL, '2026-01-17 08:00:00');
+INSERT INTO `orders` (`order_id`, `order_code`, `station_id`, `user_id`, `vehicle_id`, `start_date`, `start_time`, `end_date`, `end_time`, `actual_return_date`, `total_amount`, `notes`, `payment_method`, `status`, `cancel_reason`, `cancelled_at`, `completed_at`, `created_at`) VALUES
+(1, 'DH001', 1, 2, 1, '2026-01-07', '00:00:00', '2026-01-10', '00:00:00', NULL, 3600000, NULL, 'CASH', 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(2, 'DH002', 2, 3, 2, '2026-01-05', '00:00:00', '2026-01-12', '00:00:00', NULL, 10500000, NULL, 'CASH', 'RENTING', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(3, 'DH003', 3, 4, 3, '2026-01-01', '00:00:00', '2026-01-10', '00:00:00', NULL, 16200000, NULL, 'CASH', 'COMPLETED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(4, 'DH004', 1, 2, 4, '2026-01-15', '00:00:00', '2026-01-16', '00:00:00', NULL, 900000, NULL, 'CASH', 'COMPLETED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(5, 'DH005', 4, 3, 5, '2026-01-18', '00:00:00', '2026-01-18', '00:00:00', NULL, 150000, NULL, 'CASH', 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(6, 'DH006', 2, 2, 6, '2026-01-20', '00:00:00', '2026-01-20', '00:00:00', NULL, 200000, NULL, 'CASH', 'CANCELLED', NULL, NULL, NULL, '2026-01-18 17:08:05'),
+(32, 'DH007', 1, 2, 1, '2026-01-10', '00:00:00', '2026-01-12', '00:00:00', '2026-01-12 09:00:00', 1200000, 'Khách trả xe sạch sẽ', 'CASH', 'COMPLETED', NULL, NULL, '2026-01-12 09:15:00', '2026-01-08 07:00:00'),
+(33, 'DH008', 2, 3, 2, '2026-01-20', '00:00:00', '2026-01-25', '00:00:00', NULL, 4500000, 'Thuê đi công tác', 'CASH', 'RENTING', NULL, NULL, NULL, '2026-01-19 02:15:00'),
+(34, 'DH009', 1, 4, 3, '2026-01-22', '00:00:00', '2026-01-23', '00:00:00', NULL, 500000, NULL, 'CASH', 'CANCELLED', 'Tài khoản người dùng bị khóa', '2026-01-22 10:00:00', NULL, '2026-01-21 01:00:00'),
+(35, 'DH010', 3, 2, 4, '2026-02-01', '00:00:00', '2026-02-05', '00:00:00', NULL, 3000000, 'Đặt trước cho kỳ nghỉ', 'CASH', 'NEW', NULL, NULL, NULL, '2026-01-24 01:00:00'),
+(36, 'DH011', 2, 3, 1, '2026-01-18', '00:00:00', '2026-01-22', '00:00:00', NULL, 2000000, 'Khách chưa thấy liên hệ', 'CASH', 'WAITING_RETURN', NULL, NULL, NULL, '2026-01-17 08:00:00'),
+(37, 'DHD9288', 15, 1, 22, '2026-01-26', '01:30:00', '2026-01-25', '03:30:00', NULL, 180000, NULL, 'CASH', 'NEW', NULL, NULL, NULL, '2026-01-26 16:51:41'),
+(38, 'DH628B6', 15, 1, 22, '2026-01-27', '00:00:00', '2026-01-28', '00:00:00', NULL, 800000, NULL, 'CASH', 'NEW', NULL, NULL, NULL, '2026-01-26 17:16:17'),
+(39, 'DHBD404', 15, 1, 22, '2026-01-28', '00:00:00', '2026-01-28', '03:00:00', NULL, 270000, NULL, 'CASH', 'NEW', NULL, NULL, NULL, '2026-01-26 17:21:19'),
+(40, 'DH8CCDE', 15, 1, 22, '2026-01-29', '00:00:00', '2026-01-29', '02:00:00', NULL, 180000, NULL, 'MOMO', 'NEW', NULL, NULL, NULL, '2026-01-26 18:00:39'),
+(41, 'DH10024', 15, 1, 22, '2026-01-30', '00:30:00', '2026-01-30', '04:30:00', NULL, 360000, NULL, 'MOMO', 'NEW', NULL, NULL, NULL, '2026-01-26 18:12:55'),
+(42, 'DHDDE60', 15, 1, 21, '2026-01-27', '05:00:00', '2026-01-27', '08:00:00', NULL, 300000, NULL, 'MOMO', 'NEW', NULL, NULL, NULL, '2026-01-26 18:23:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_transactions`
+--
+
+CREATE TABLE `payment_transactions` (
+  `transaction_id` int NOT NULL,
+  `order_code` varchar(20) NOT NULL,
+  `payment_type` varchar(20) DEFAULT 'MOMO',
+  `amount` decimal(15,0) DEFAULT NULL,
+  `trans_id` varchar(50) DEFAULT NULL,
+  `result_code` int DEFAULT NULL,
+  `message` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `payment_transactions`
+--
+
+INSERT INTO `payment_transactions` (`transaction_id`, `order_code`, `payment_type`, `amount`, `trans_id`, `result_code`, `message`, `created_at`) VALUES
+(1, 'DHDDE60', 'MOMO', 300000, '4655049324', -1, 'Thành công.', '2026-01-26 18:23:24');
 
 -- --------------------------------------------------------
 
@@ -123,10 +156,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `birthday`, `role`, `avatar`, `status`, `created_at`, `managed_station_id`) VALUES
-(1, 'Nguyen Anh Huy', 'soicaca77@gmail.com', '', '$2y$10$vM.cJyEINjknC8EKrYlT6OwRW4HwTHQyspTdzj7pNr7avPajBKcam', NULL, 'ADMIN', NULL, 'BLOCKED', '2025-12-28 14:10:42', NULL),
+(1, 'Nguyen Anh Huy', 'soicaca77@gmail.com', '', '$2y$10$vM.cJyEINjknC8EKrYlT6OwRW4HwTHQyspTdzj7pNr7avPajBKcam', NULL, 'ADMIN', NULL, 'ACTIVE', '2025-12-28 14:10:42', NULL),
 (2, 'Nguyen Anh Huy', 'kolshoppe100@gmail.com', NULL, '$2y$10$CCXQMhxeKtzMh6UHq.FuBug8jofOXxBPRI064Mib.nYCMCngdfLS6', NULL, 'USER', NULL, 'ACTIVE', '2026-01-11 07:43:45', NULL),
 (3, 'Huy Nguyễn Anh', 'soicacwa77@gmail.com', '6019521325', '$2y$10$TbwxcTFjtt9pbyqI562gT.5YiUmbL9KKOUrJmgnuj4qiJ5KQWlDQS', '2026-02-07', 'USER', NULL, 'ACTIVE', '2026-01-15 15:01:07', NULL),
-(4, 'Huy Nguyễn Anh', '1111dwdwdw@gmail.com', '03741888267', '$2y$10$jy/dRh2M8fNduxfjuJbRD.6JUoZcoTPT0qKiNWVPLaZi/qLbWNM4K', '2026-01-21', 'USER', '1.png', 'BLOCKED', '2026-01-15 15:02:48', NULL),
+(4, 'Huy Nguyễn Anh', '1111dwdwdw@gmail.com', '03741888267', '$2y$10$jy/dRh2M8fNduxfjuJbRD.6JUoZcoTPT0qKiNWVPLaZi/qLbWNM4K', '2026-01-21', 'USER', '1.png', 'ACTIVE', '2026-01-15 15:02:48', NULL),
 (5, 'Huy Nguyễn Anh', 'ng.anhhuy2005@gmail.com', '0374188826', '$2y$10$ACH/fATQkgi0cmgICbMJY.ys5yH0lKVsAkLDv3aB2dQFkU1C2opiK', '2026-01-20', 'STATION', NULL, 'ACTIVE', '2026-01-25 13:42:46', 2);
 
 -- --------------------------------------------------------
@@ -196,6 +229,12 @@ ALTER TABLE `orders`
   ADD KEY `fk_orders_vehicle` (`vehicle_id`);
 
 --
+-- Indexes for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  ADD PRIMARY KEY (`transaction_id`);
+
+--
 -- Indexes for table `stations`
 --
 ALTER TABLE `stations`
@@ -226,7 +265,13 @@ ALTER TABLE `vehicles`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `order_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+
+--
+-- AUTO_INCREMENT for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  MODIFY `transaction_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `stations`
