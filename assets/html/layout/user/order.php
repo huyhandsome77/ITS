@@ -563,7 +563,33 @@ if (!isset($_SESSION['user_id'])) {
                 const data = await response.json();
 
                 if (data.error) {
-                    showError('Lỗi', data.message || data.error);
+                    // Nếu chưa xác minh, hiển thị thông báo đặc biệt
+                    if (data.redirect_to_settings) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Tài khoản chưa xác minh',
+                            html: `
+                                <p class="mb-4">${data.message}</p>
+                                <p class="text-sm text-gray-600">Bạn cần hoàn thành xác minh tài khoản với:</p>
+                                <ul class="text-left text-sm text-gray-600 mt-2 ml-6 list-disc">
+                                    <li>CCCD/CMND (2 mặt)</li>
+                                    <li>Ảnh khuôn mặt</li>
+                                    <li>Thông tin ngân hàng</li>
+                                    <li>Liên hệ khẩn cấp</li>
+                                </ul>
+                            `,
+                            confirmButtonText: 'Đi đến Cài đặt',
+                            showCancelButton: true,
+                            cancelButtonText: 'Để sau',
+                            confirmButtonColor: '#2563eb'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/ITS/assets/html/layout/user/setting.php';
+                            }
+                        });
+                    } else {
+                        showError('Lỗi', data.message || data.error);
+                    }
                     return;
                 }
 

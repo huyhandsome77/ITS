@@ -12,6 +12,26 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
+// Kiểm tra xác minh tài khoản
+try {
+    $checkVerifiedSql = "SELECT is_verified FROM users WHERE user_id = :user_id";
+    $checkStmt = $conn->prepare($checkVerifiedSql);
+    $checkStmt->execute([':user_id' => $userId]);
+    $userVerification = $checkStmt->fetch();
+    
+    if (!$userVerification || $userVerification['is_verified'] !== 'VERIFIED') {
+        echo json_encode([
+            'error' => 'Tài khoản chưa xác minh',
+            'message' => 'Bạn cần hoàn thành xác minh tài khoản (KYC) trước khi đặt xe. Vui lòng vào trang Cài đặt để xác minh.',
+            'redirect_to_settings' => true
+        ]);
+        exit;
+    }
+} catch (Exception $e) {
+    echo json_encode(['error' => 'Lỗi kiểm tra xác minh tài khoản']);
+    exit;
+}
+
 // Kiểm tra phương thức POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['error' => 'Phương thức không hợp lệ']);
