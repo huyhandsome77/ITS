@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th1 26, 2026 lúc 07:59 PM
+-- Thời gian đã tạo: Th1 26, 2026 lúc 08:50 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -134,7 +134,7 @@ INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `birt
 (1, 'Nguyen Anh Huy', 'soicaca77@gmail.com', '', '$2y$10$vM.cJyEINjknC8EKrYlT6OwRW4HwTHQyspTdzj7pNr7avPajBKcam', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PENDING', NULL, NULL, 'ADMIN', NULL, 'ACTIVE', '2025-12-28 14:10:42', NULL),
 (2, 'Nguyen Anh Huy', 'kolshoppe100@gmail.com', NULL, '$2y$10$CCXQMhxeKtzMh6UHq.FuBug8jofOXxBPRI064Mib.nYCMCngdfLS6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PENDING', NULL, NULL, 'USER', NULL, 'ACTIVE', '2026-01-11 07:43:45', NULL),
 (3, 'Huy Nguyễn Anh', 'soicacwa77@gmail.com', '6019521325', '$2y$10$TbwxcTFjtt9pbyqI562gT.5YiUmbL9KKOUrJmgnuj4qiJ5KQWlDQS', '2026-02-07', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PENDING', NULL, NULL, 'USER', NULL, 'ACTIVE', '2026-01-15 15:01:07', NULL),
-(4, 'Nguyễn Phước Thịnh', '1111dwdwdw@gmail.com', '0374188826', '$2y$10$jy/dRh2M8fNduxfjuJbRD.6JUoZcoTPT0qKiNWVPLaZi/qLbWNM4K', '2026-01-21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PENDING', NULL, NULL, 'USER', '1.png', 'ACTIVE', '2026-01-15 15:02:48', NULL),
+(4, 'Nguyễn Phước Thịnh', '1111dwdwdw@gmail.com', '0374188826', '$2y$10$jy/dRh2M8fNduxfjuJbRD.6JUoZcoTPT0qKiNWVPLaZi/qLbWNM4K', '2026-01-21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'REJECTED', NULL, 'hông thích cho âpp', 'USER', '1.png', 'ACTIVE', '2026-01-15 15:02:48', NULL),
 (5, 'LeThanh', 'HaiConVit@gmail.com', NULL, '$2y$10$35S0at784D2w6Ktzq28pcODVcBTHTirckqAc8saxikDaA10uIaYy.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'PENDING', NULL, NULL, 'STATION', '5_1769450494.jpg', 'ACTIVE', '2026-01-25 09:13:30', 2);
 
 -- --------------------------------------------------------
