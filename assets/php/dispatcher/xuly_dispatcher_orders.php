@@ -27,20 +27,15 @@ $toDate    = $_GET['to_date'] ?? '';
 $where = [];
 $params = [];
 
-// Force filter by Managed Station if set
-if ($managed_station_id) {
-    $where[] = "o.station_id = :station_id";
-    $params[':station_id'] = $managed_station_id;
-} else {
-    // If not managed station, maybe allow filter?
-    // But for consistency with "Dispatcher" role usually managing a specific station.
-    // If no station assigned, maybe they are a "General Dispatcher"?
-    // Let's check $_GET['station'] just in case they are super-dispatcher.
-    if (!empty($_GET['station'])) {
-        $where[] = "o.station_id = :station_get";
-        $params[':station_get'] = $_GET['station'];
-    }
+// Allow filtering by station if selected
+if (!empty($_GET['station'])) {
+    $where[] = "o.station_id = :station_get";
+    $params[':station_get'] = $_GET['station'];
 }
+
+// Fetch all stations for the dropdown
+$placeStmt = $conn->query("SELECT station_id, station_name FROM stations ORDER BY station_name ASC");
+$all_stations = $placeStmt->fetchAll();
 
 if ($status !== '') {
     $where[] = "o.status = :status";

@@ -154,14 +154,20 @@
                                     <?= number_format($c['price_per_day'], 0, ',', '.') ?>đ / ngày • 
                                     <?= number_format($c['price_per_hour'], 0, ',', '.') ?>đ / giờ
                                 </p>
-                                <button onclick="openBooking(
-                                    <?= $c['vehicle_id'] ?>, 
-                                    '<?= addslashes($c['vehicle_name']) ?>',
-                                    <?= $c['price_per_day'] ?>,
-                                    <?= $c['price_per_hour'] ?>,
-                                    '<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : '' ?>'
-                                )" class="w-full py-2 rounded-lg text-white font-semibold"
-                                    style="background:var(--primary-color)">Đặt lịch</button>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="viewReviews(<?= $c['vehicle_id'] ?>)" 
+                                        class="w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50">
+                                        Xem đánh giá
+                                    </button>
+                                    <button onclick="openBooking(
+                                        <?= $c['vehicle_id'] ?>, 
+                                        '<?= addslashes($c['vehicle_name']) ?>',
+                                        <?= $c['price_per_day'] ?>,
+                                        <?= $c['price_per_hour'] ?>,
+                                        '<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : '' ?>'
+                                    )" class="w-full py-2 rounded-lg text-white font-semibold"
+                                        style="background:var(--primary-color)">Đặt lịch</button>
+                                </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -212,14 +218,20 @@
                                     <?= number_format($b['price_per_day'], 0, ',', '.') ?>đ / ngày • 
                                     <?= number_format($b['price_per_hour'], 0, ',', '.') ?>đ / giờ
                                 </p>
-                                <button onclick="openBooking(
-                                    <?= $b['vehicle_id'] ?>, 
-                                    '<?= addslashes($b['vehicle_name']) ?>',
-                                    <?= $b['price_per_day'] ?>,
-                                    <?= $b['price_per_hour'] ?>,
-                                    '<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : '' ?>'
-                                )" class="w-full py-2 rounded-lg text-white font-semibold"
-                                    style="background:var(--primary-color)">Đặt lịch</button>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="viewReviews(<?= $b['vehicle_id'] ?>)" 
+                                        class="w-full py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50">
+                                        Xem đánh giá
+                                    </button>
+                                    <button onclick="openBooking(
+                                        <?= $b['vehicle_id'] ?>, 
+                                        '<?= addslashes($b['vehicle_name']) ?>',
+                                        <?= $b['price_per_day'] ?>,
+                                        <?= $b['price_per_hour'] ?>,
+                                        '<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : '' ?>'
+                                    )" class="w-full py-2 rounded-lg text-white font-semibold"
+                                        style="background:var(--primary-color)">Đặt lịch</button>
+                                </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
@@ -608,7 +620,38 @@
 
             <?php include '../../../includes/footer.php'; ?>
 
+    <!-- Review Modal -->
+    <div id="reviewModal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/50" onclick="closeReviews()"></div>
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col relative z-10 animate-fade-in-up">
+            
+            <!-- Header -->
+            <div class="p-5 border-b flex justify-between items-center bg-white rounded-t-2xl sticky top-0 z-10">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800" id="reviewVehicleName">Đánh giá xe</h3>
+                    <div class="flex items-center gap-2 text-yellow-500 mt-1">
+                        <span class="text-2xl font-bold" id="reviewAvgRating">0.0</span>
+                        <div class="flex" id="reviewStars"></div>
+                        <span class="text-gray-500 text-sm ml-2">(<span id="reviewCount">0</span> đánh giá)</span>
+                    </div>
+                </div>
+                <button onclick="closeReviews()" class="p-2 hover:bg-gray-100 rounded-full text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-0 overflow-y-auto bg-gray-50" id="reviewList"></div>
+
+            <!-- Footer -->
+            <div class="p-4 border-t bg-white rounded-b-2xl text-center text-sm text-gray-500">
+                Chỉ khách hàng đã thuê xe mới có thể viết đánh giá.
+            </div>
         </div>
+    </div>
+    </div>
     </div>
     <script src="../../../js/main.js"></script>
     <!-- ================= JS ================= -->
@@ -737,6 +780,104 @@
         overlay.classList.add('hidden');
         modal.classList.add('hidden');
     }
+
+
+
+    function viewReviews(vehicleId) {
+        const modal = document.getElementById('reviewModal');
+        const reviewList = document.getElementById('reviewList');
+        const vehicleNameEl = document.getElementById('reviewVehicleName');
+        const avgRatingEl = document.getElementById('reviewAvgRating');
+        const countEl = document.getElementById('reviewCount');
+        const starsEl = document.getElementById('reviewStars');
+
+        modal.classList.remove('hidden');
+        
+        // Loading State
+        reviewList.innerHTML = `
+            <div class="p-10 text-center text-gray-500">
+                <svg class="animate-spin h-8 w-8 mx-auto mb-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Đang tải đánh giá...
+            </div>
+        `;
+
+        fetch(`/ITS/assets/php/user/get_vehicle_reviews.php?vehicle_id=${vehicleId}`)
+            .then(res => res.json())
+            .then(res => {
+                if(!res.success) {
+                    reviewList.innerHTML = `<div class="p-10 text-center text-red-500">${res.message}</div>`;
+                    return;
+                }
+
+                const { reviews, vehicle_name, avg_rating, total_reviews } = res.data;
+                
+                vehicleNameEl.textContent = vehicle_name;
+                avgRatingEl.textContent = avg_rating;
+                countEl.textContent = total_reviews;
+                starsEl.innerHTML = renderStars(avg_rating);
+
+                if(reviews.length === 0) {
+                    reviewList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center p-12 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <p class="text-lg">Chưa có đánh giá nào</p>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    reviews.forEach(r => {
+                        html += `
+                            <div class="p-5 border-b bg-white last:border-0 hover:bg-gray-50 transition">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 overflow-hidden">
+                                        ${r.avatar ? `<img src="/ITS/assets/img/avatars/${r.avatar}" class="w-full h-full object-cover">` : r.full_name.charAt(0)}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <div>
+                                                <h4 class="font-bold text-gray-800">${r.full_name}</h4>
+                                                <p class="text-xs text-gray-500">${new Date(r.created_at).toLocaleDateString('vi-VN')}</p>
+                                            </div>
+                                            <div class="flex text-yellow-500 text-sm">
+                                                ${renderStars(r.rating)}
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700 leading-relaxed">${r.comment || '<span class="italic text-gray-400">Không có nhận xét</span>'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    reviewList.innerHTML = html;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                reviewList.innerHTML = `<div class="p-10 text-center text-red-500">Không thể tải đánh giá. Vui lòng thử lại sau.</div>`;
+            });
+    }
+
+    function closeReviews() {
+        document.getElementById('reviewModal').classList.add('hidden');
+    }
+
+    function renderStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.round(rating)) {
+                stars += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+            } else {
+                stars += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+            }
+        }
+        return stars;
+    }
+
 
     /* ================= MODE & TIME ================= */
     function setMode(m) {
@@ -927,6 +1068,109 @@
         if(!modal.classList.contains('hidden')) closeBooking();
         if(!document.getElementById('detailModal').classList.contains('hidden')) closeDetails();
     });
+
+    /* ================= REVIEW FUNCTIONS ================= */
+    function viewReviews(vehicleId) {
+        const modal = document.getElementById('reviewModal');
+        const reviewList = document.getElementById('reviewList');
+        const vehicleNameEl = document.getElementById('reviewVehicleName');
+        const avgRatingEl = document.getElementById('reviewAvgRating');
+        const countEl = document.getElementById('reviewCount');
+        const starsEl = document.getElementById('reviewStars');
+
+        if(!modal) {
+             console.error('Review Modal element not found');
+             alert('Có lỗi xảy ra, vui lòng tải lại trang');
+             return;
+        }
+
+        modal.classList.remove('hidden');
+        
+        // Loading State
+        reviewList.innerHTML = `
+            <div class="p-10 text-center text-gray-500">
+                <svg class="animate-spin h-8 w-8 mx-auto mb-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Đang tải đánh giá...
+            </div>
+        `;
+
+        fetch(`/ITS/assets/php/user/get_vehicle_reviews.php?vehicle_id=${vehicleId}`)
+            .then(res => res.json())
+            .then(res => {
+                if(!res.success) {
+                    reviewList.innerHTML = `<div class="p-10 text-center text-red-500">${res.message}</div>`;
+                    return;
+                }
+
+                const { reviews, vehicle_name, avg_rating, total_reviews } = res.data;
+                
+                vehicleNameEl.textContent = vehicle_name;
+                avgRatingEl.textContent = avg_rating;
+                countEl.textContent = total_reviews;
+                starsEl.innerHTML = renderStars(avg_rating);
+
+                if(reviews.length === 0) {
+                    reviewList.innerHTML = `
+                        <div class="flex flex-col items-center justify-center p-12 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            <p class="text-lg">Chưa có đánh giá nào</p>
+                        </div>
+                    `;
+                } else {
+                    let html = '';
+                    reviews.forEach(r => {
+                        html += `
+                            <div class="p-5 border-b bg-white last:border-0 hover:bg-gray-50 transition">
+                                <div class="flex items-start gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0 overflow-hidden">
+                                        ${r.avatar ? `<img src="/ITS/assets/img/avatars/${r.avatar}" class="w-full h-full object-cover">` : r.full_name.charAt(0)}
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <div>
+                                                <h4 class="font-bold text-gray-800">${r.full_name}</h4>
+                                                <p class="text-xs text-gray-500">${new Date(r.created_at).toLocaleDateString('vi-VN')}</p>
+                                            </div>
+                                            <div class="flex text-yellow-500 text-sm">
+                                                ${renderStars(r.rating)}
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700 leading-relaxed">${r.comment || '<span class="italic text-gray-400">Không có nhận xét</span>'}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    reviewList.innerHTML = html;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                reviewList.innerHTML = `<div class="p-10 text-center text-red-500">Không thể tải đánh giá. Vui lòng thử lại sau.</div>`;
+            });
+    }
+
+    function closeReviews() {
+        const modal = document.getElementById('reviewModal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    function renderStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.round(rating)) {
+                stars += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+            } else {
+                stars += `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>`;
+            }
+        }
+        return stars;
+    }
     </script>
 
 

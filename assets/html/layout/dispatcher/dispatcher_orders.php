@@ -57,7 +57,7 @@ require_once '../../../php/dispatcher/xuly_dispatcher_orders.php';
                     <div>
                         <h1 class="text-3xl font-bold" style="color: var(--primary-color);">ĐƠN ĐẶT XE</h1>
                         <p class="text-sm text-gray-500 mt-1">
-                            <?= isset($managed_station_id) ? "Đang quản lý trạm (ID: $managed_station_id)" : "Hiển thị tất cả đơn hàng" ?>
+                            Quản lý đơn đặt xe
                         </p>
                     </div>
                 </div>
@@ -145,20 +145,21 @@ require_once '../../../php/dispatcher/xuly_dispatcher_orders.php';
                 <!-- Filter Section -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5 mb-6">
                     <h2 class="text-lg font-semibold mb-4">Bộ lọc</h2>
-                    <form method="GET" class="grid grid-cols-1 md:grid-cols-<?= isset($managed_station_id) ? '4' : '5' ?> gap-4">
+                    <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
 
-                        <?php if (!isset($managed_station_id)): ?>
-                        <!-- Station Select (Only if not managed) -->
-                        <select name="station" class="border rounded-lg px-4 py-2">
+                        <!-- Station Select -->
+                        <select name="station" class="border rounded-lg px-4 py-2 text-black">
                             <option value="">Tất cả trạm</option>
-                            <!-- You might want to populate this dynamically if needed -->
-                             <option value="1" <?= ($_GET['station'] ?? '') == 1 ? 'selected' : '' ?>>Nguyễn Huệ - Q1</option>
-                             <option value="2" <?= ($_GET['station'] ?? '') == 2 ? 'selected' : '' ?>>Lê Lợi - Q1</option>
-                             <option value="3" <?= ($_GET['station'] ?? '') == 3 ? 'selected' : '' ?>>Võ Văn Tần - Q3</option>
+                            <?php if (!empty($all_stations)): ?>
+                                <?php foreach ($all_stations as $st): ?>
+                                    <option value="<?= $st['station_id'] ?>" <?= ($_GET['station'] ?? '') == $st['station_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($st['station_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
-                        <?php endif; ?>
 
-                        <select name="status" class="border rounded-lg px-4 py-2">
+                        <select name="status" class="border rounded-lg px-4 py-2 text-black">
                             <option value="">Tất cả trạng thái</option>
                             <option value="NEW" <?= ($_GET['status'] ?? '') == 'NEW' ? 'selected' : '' ?>>Đơn mới</option>
                             <option value="RENTING" <?= ($_GET['status'] ?? '') == 'RENTING' ? 'selected' : '' ?>>Đang thuê</option>
@@ -167,10 +168,10 @@ require_once '../../../php/dispatcher/xuly_dispatcher_orders.php';
                             <option value="CANCELLED" <?= ($_GET['status'] ?? '') == 'CANCELLED' ? 'selected' : '' ?>>Đã hủy</option>
                         </select>
 
-                        <input type="date" name="from_date" value="<?= $_GET['from_date'] ?? '' ?>" class="border rounded-lg px-4 py-2">
-                        <input type="date" name="to_date" value="<?= $_GET['to_date'] ?? '' ?>" class="border rounded-lg px-4 py-2">
+                        <input type="date" name="from_date" value="<?= $_GET['from_date'] ?? '' ?>" class="border rounded-lg px-4 py-2 text-black">
+                        <input type="date" name="to_date" value="<?= $_GET['to_date'] ?? '' ?>" class="border rounded-lg px-4 py-2 text-black">
 
-                        <button type="submit" class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
+                        <button type="submit" class="px-6 py-2 rounded-lg font-semibold text-white bg-black">
                             🔍 Lọc
                         </button>
                     </form>
