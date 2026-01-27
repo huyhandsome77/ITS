@@ -132,7 +132,23 @@
                             <img src="<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : 'https://placehold.co/600x400?text=No+Image' ?>"
                                 class="h-48 w-full object-cover">
                             <div class="p-4">
-                                <h3 class="font-semibold text-lg"><?= $c['vehicle_name'] ?></h3>
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-semibold text-lg"><?= $c['vehicle_name'] ?></h3>
+                                    <button onclick="openDetails(
+                                        '<?= addslashes($c['vehicle_name']) ?>',
+                                        '<?= $c['brand'] ?>',
+                                        '<?= $c['model'] ?>',
+                                        <?= $c['seats'] ?>,
+                                        '<?= $c['year'] ?>',
+                                        '<?= addslashes($c['description'] ?? '') ?>',
+                                        '<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : '' ?>',
+                                        <?= $c['price_per_day'] ?>
+                                    )" class="group p-2 rounded-full bg-slate-50 hover:bg-blue-600 text-slate-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5" title="Xem chi tiết">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <p class="text-sm text-slate-500 mb-2"><?= $c['seats'] ?> chỗ • <?= $c['brand'] ?></p>
                                 <p class="font-bold mb-4">
                                     <?= number_format($c['price_per_day'], 0, ',', '.') ?>đ / ngày • 
@@ -174,7 +190,23 @@
                             <img src="<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : 'https://placehold.co/600x400?text=No+Image' ?>"
                                 class="h-48 w-full object-cover">
                             <div class="p-4">
-                                <h3 class="font-semibold text-lg"><?= $b['vehicle_name'] ?></h3>
+                                <div class="flex justify-between items-start">
+                                    <h3 class="font-semibold text-lg"><?= $b['vehicle_name'] ?></h3>
+                                    <button onclick="openDetails(
+                                        '<?= addslashes($b['vehicle_name']) ?>',
+                                        '<?= $b['brand'] ?>',
+                                        '<?= $b['model'] ?>',
+                                        2,
+                                        '<?= $b['year'] ?>',
+                                        '<?= addslashes($b['description'] ?? '') ?>',
+                                        '<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : '' ?>',
+                                        <?= $b['price_per_day'] ?>
+                                    )" class="group p-2 rounded-full bg-slate-50 hover:bg-orange-500 text-slate-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5" title="Xem chi tiết">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
                                 <p class="text-sm text-slate-500 mb-2">Xe máy • <?= $b['brand'] ?></p>
                                 <p class="font-bold mb-4">
                                     <?= number_format($b['price_per_day'], 0, ',', '.') ?>đ / ngày • 
@@ -209,8 +241,212 @@
                 <!-- ===== MODAL ===== -->
                 <div id="overlay" class="fixed inset-0 bg-black/50 hidden z-[9998]"></div>
 
-                <div id="modal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center px-4">
+                <!-- Vehicle Detail Modal -->
+    <div id="detailModal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center px-4 pointer-events-none">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto pointer-events-auto transform scale-95 opacity-0 transition-all duration-300 flex flex-col" id="detailModalContent">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center p-5 border-b sticky top-0 z-20 shadow-sm shrink-0" style="background:var(--primary-color); color:white;">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold" id="detailTitle">Thông tin phương tiện</h3>
+                </div>
+                <button onclick="closeDetails()" class="p-2 hover:bg-white/20 rounded-full transition text-white/90 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
 
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <!-- Vehicle Info -->
+                <div class="flex flex-col md:flex-row gap-8 mb-10">
+                    <div class="w-full md:w-5/12">
+                        <div class="relative group rounded-2xl overflow-hidden shadow-lg border border-slate-100">
+                            <img id="detailImage" src="" alt="Vehicle Image" class="w-full h-64 object-cover transform group-hover:scale-105 transition duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-4">
+                                <span class="text-white text-sm font-medium">Hình ảnh thực tế</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-7/12 space-y-5">
+                        <h2 id="detailName" class="text-3xl font-bold text-slate-800 tracking-tight"></h2>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                <span class="block text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">Hãng xe</span>
+                                <span id="detailBrand" class="font-semibold text-slate-700 text-lg"></span>
+                            </div>
+                            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                <span class="block text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">Đời xe</span>
+                                <span id="detailYear" class="font-semibold text-slate-700 text-lg"></span>
+                            </div>
+                            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                <span class="block text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">Số chỗ</span>
+                                <span id="detailSeats" class="font-semibold text-slate-700 text-lg"></span>
+                            </div>
+                            <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                                <span class="block text-xs text-indigo-500 font-bold uppercase tracking-wider mb-1">Kiểu xe</span>
+                                <span id="detailModel" class="font-semibold text-slate-700 text-lg"></span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="flex items-center gap-2 text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+                                Mô tả
+                            </span>
+                            <p id="detailDesc" class="text-slate-600 leading-relaxed text-sm"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Policies Section -->
+                <div class="mb-10">
+                    <h4 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        </span>
+                        Chính sách & Điều khoản
+                    </h4>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <h5 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Thời gian nhận/trả
+                                </h5>
+                                <p class="text-sm text-slate-600">Nhận xe <b>24/7</b>. Trả xe trễ quá 30 phút tính thêm phí.</p>
+                            </div>
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                                <h5 class="font-bold text-slate-700 mb-2 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Thủ tục nhận xe
+                                </h5>
+                                <p class="text-sm text-slate-600">Yêu cầu <b>CCCD/CMND</b> & <b>Bằng lái</b> phù hợp. Xe máy có thể yêu cầu cọc.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-amber-50 rounded-xl p-5 border border-amber-100 shadow-sm">
+                            <h5 class="font-bold text-amber-800 mb-4 flex items-center gap-2 border-b border-amber-200 pb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                Quy định quan trọng
+                            </h5>
+                            <ul class="space-y-3 text-sm text-amber-900">
+                                <li class="flex items-start gap-2">
+                                    <span class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-600 shrink-0"></span>
+                                    <span><b>Pháp lý:</b> Chỉ sử dụng hợp pháp. Nghiêm cấm cầm cố, thế chấp, cho thuê lại.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-600 shrink-0"></span>
+                                    <span><b>Vệ sinh:</b> Cấm hút thuốc, chở hàng cấm/nặng mùi. Giữ xe sạch sẽ (vi phạm thu phí vệ sinh).</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-600 shrink-0"></span>
+                                    <div class="w-full">
+                                        <b>Giới hạn Km/Chuyến:</b>
+                                        <div class="grid grid-cols-2 gap-x-2 gap-y-1 mt-1 text-amber-800 opacity-90 text-xs">
+                                            <span>• 4h: 250km</span>
+                                            <span>• 8h: 300km</span>
+                                            <span>• 12h: 350km</span>
+                                            <span>• 24h: 400km</span>
+                                        </div>
+                                        <span class="block mt-1 italic text-xs text-red-600 font-medium">→ Vượt mức: 3.000đ/km</span>
+                                    </div>
+                                </li>
+                                <li class="text-center pt-2 font-bold text-red-500 scale-95 border-t border-amber-200 mt-2">
+                                    Vi phạm có thể bị từ chối phục vụ!
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Surcharges Section -->
+                <div>
+                    <h4 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </span>
+                        Biểu phí phụ thu
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Late Fee -->
+                        <div class="bg-red-50 p-5 rounded-2xl border border-red-100 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-bold text-slate-700 text-lg">Phí trả trễ</span>
+                                    <span class="font-extrabold text-red-600 text-xl" id="detailLateFee">-- đ/giờ</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mb-3">
+                                    (Tính bằng 20% giá thuê ngày). Nên mua thêm gói giờ để tiết kiệm chi phí.
+                                </p>
+                            </div>
+                            <div class="text-xs font-semibold text-red-500 bg-white p-2 rounded-lg text-center border border-red-100">
+                                ⚠️ Vui lòng gia hạn trước 1 tiếng
+                            </div>
+                        </div>
+
+                        <!-- Fuel -->
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-slate-700">Nhiên liệu</span>
+                                <span class="font-bold text-slate-900 text-lg">27.000 đ/lít</span>
+                            </div>
+                            <p class="text-xs text-slate-500">
+                                Thu khi trả xe không đúng vạch xăng cũ.
+                            </p>
+                            <hr class="my-3 border-slate-200">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold text-slate-700">Vệ sinh</span>
+                                <span class="font-bold text-slate-900 text-lg">150.000 đ</span>
+                            </div>
+                            <p class="text-xs text-slate-500">
+                                Thu nếu xe bẩn, có mùi hôi, rác thải.
+                            </p>
+                        </div>
+
+                        <!-- Mileage & Tolls -->
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 md:col-span-2 flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-slate-700">Phí vượt Km</span>
+                                    <span class="font-bold text-slate-900 text-lg">3.000 đ/km</span>
+                                </div>
+                                <p class="text-xs text-slate-500">
+                                    Áp dụng cho mỗi km vượt định mức quy định.
+                                </p>
+                            </div>
+                            <div class="hidden md:block w-px bg-slate-200"></div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-slate-700">Phí cầu đường</span>
+                                    <span class="font-bold text-slate-900 text-lg">Thực tế</span>
+                                </div>
+                                <p class="text-xs text-slate-500">
+                                    Thanh toán theo phát sinh trên tài khoản VETC.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="p-5 border-t bg-slate-50 flex justify-end shrink-0 z-20">
+                <button onclick="closeDetails()" class="px-8 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition shadow-sm hover:shadow">Đóng lại</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center px-4">
                     <form id="bookingForm" method="POST" action="/ITS/assets/php/user/submit_booking.php" 
                           class="bg-white w-full max-w-2xl rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
                         
@@ -416,6 +652,49 @@
     const resultSection = document.getElementById('resultSection');
     const resultBody = document.getElementById('resultBody');
     const btnPayment = document.getElementById('btnPayment');
+
+    /* ================= OPEN DETAIL MODAL ================= */
+    function openDetails(name, brand, model, seats, year, desc, image, priceDay) {
+        document.getElementById('detailName').innerText = name;
+        document.getElementById('detailBrand').innerText = brand;
+        document.getElementById('detailModel').innerText = model;
+        document.getElementById('detailSeats').innerText = seats;
+        document.getElementById('detailYear').innerText = year;
+        document.getElementById('detailDesc').innerText = desc || 'Không có mô tả chi tiết.';
+        document.getElementById('detailImage').src = image || 'https://placehold.co/600x400?text=No+Image';
+
+        // Calculate Late Fee (20% of Day Price)
+        const lateFee = Math.round(priceDay * 0.2);
+        document.getElementById('detailLateFee').innerText = lateFee.toLocaleString('vi-VN') + ' đ/giờ';
+
+        const modal = document.getElementById('detailModal');
+        const content = document.getElementById('detailModalContent');
+        const overlay = document.getElementById('overlay');
+
+        overlay.classList.remove('hidden');
+        modal.classList.remove('hidden');
+        
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+            content.classList.add('scale-100', 'opacity-100');
+        }, 10);
+    }
+
+    function closeDetails() {
+        const modal = document.getElementById('detailModal');
+        const content = document.getElementById('detailModalContent');
+        const overlay = document.getElementById('overlay');
+
+        content.classList.remove('scale-100', 'opacity-100');
+        content.classList.add('scale-95', 'opacity-0');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            if(document.getElementById('modal').classList.contains('hidden')) {
+                overlay.classList.add('hidden');
+            }
+        }, 300);
+    }
 
     /* ================= OPEN MODAL ================= */
     function openBooking(vehicleId, name, pDay, pHour, image) {
@@ -642,6 +921,12 @@
             icon.style.transform = 'rotate(180deg)';
         }
     }
+
+    // Overlay Clicker to Close Modals
+    overlay.addEventListener('click', function() {
+        if(!modal.classList.contains('hidden')) closeBooking();
+        if(!document.getElementById('detailModal').classList.contains('hidden')) closeDetails();
+    });
     </script>
 
 

@@ -260,29 +260,38 @@ include '../../../php/admin/xuly_order.php';
                                     </td>
 
                                     <td class="px-4 py-3 text-center">
+                                        <div class="flex justify-center items-center gap-2">
+                                            <!-- Xem -->
+                                            <button onclick="viewOrder('<?= $order['order_code'] ?>')"
+                                                class="text-blue-600 hover:text-blue-800 transition-colors tooltip-btn" title="Xem chi tiết">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </button>
 
-                                        <!-- Xem -->
-                                        <button onclick="viewOrder('<?= $order['order_code'] ?>')"
-                                            class="text-blue-600 mx-1">👁️‍🗨️</button>
+                                            <!-- Chỉ HỦY khi ĐƠN MỚI -->
+                                            <?php if ($order['status'] === 'NEW'): ?>
+                                            <a href="/ITS/assets/php/admin/cancel_order.php?code=<?= $order['order_code'] ?>"
+                                                class="text-red-600 hover:text-red-800 transition-colors tooltip-btn"
+                                                onclick="return confirm('Bạn có chắc muốn hủy đơn này?')" title="Hủy đơn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </a>
+                                            <?php endif; ?>
 
-                                        <!-- Chỉ HỦY khi ĐƠN MỚI -->
-                                        <?php if ($order['status'] === 'NEW'): ?>
-                                        <a href="/ITS/assets/php/admin/cancel_order.php?code=<?= $order['order_code'] ?>"
-                                            class="text-red-600 mx-1"
-                                            onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">
-                                            ❌
-                                        </a>
-                                        <?php endif; ?>
-
-                                        <!-- Chỉ XÁC NHẬN TRẢ XE khi CHỜ TRẢ -->
-                                        <?php if ($order['status'] === 'WAITING_RETURN'): ?>
-                                        <a href="/ITS/assets/php/admin/return_order.php?code=<?= $order['order_code'] ?>"
-                                            class="text-green-600 mx-1"
-                                            onclick="return confirm('Xác nhận khách đã trả xe?')">
-                                            ✅
-                                        </a>
-                                        <?php endif; ?>
-
+                                            <!-- Chỉ XÁC NHẬN TRẢ XE khi CHỜ TRẢ -->
+                                            <?php if ($order['status'] === 'WAITING_RETURN'): ?>
+                                            <a href="/ITS/assets/php/admin/return_order.php?code=<?= $order['order_code'] ?>"
+                                                class="text-green-600 hover:text-green-800 transition-colors tooltip-btn"
+                                                onclick="return confirm('Xác nhận khách đã trả xe?')" title="Xác nhận trả xe">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </a>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
 
                                 </tr>

@@ -156,64 +156,58 @@
                                 </td>
                                 <td class="px-4 py-3 text-center whitespace-nowrap">
 
-                                    <!-- XEM -->
-                                    <!-- <button onclick="viewStation(<?= $s['station_id'] ?>)"
-                                        class="text-blue-600 hover:text-blue-800 mx-1" title="Xem trạm">
-                                        <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 110-8 4 4 0 010 8z" />
-                                        </svg>
-                                    </button> -->
+                                    <div class="flex justify-center items-center gap-2">
+                                        <!-- SỬA (KHÔNG CHO SỬA KHI BẢO TRÌ) -->
+                                        <?php if (!$s['is_maintenance']): ?>
+                                        <button onclick="openEditStationModal(
+                                            <?= $s['station_id'] ?>,
+                                            '<?= addslashes($s['station_name']) ?>',
+                                            '<?= addslashes($s['address']) ?>',
+                                            '<?= $s['latitude'] ?? '' ?>',
+                                            '<?= $s['longitude'] ?? '' ?>'
+                                        )" class="text-yellow-600 hover:text-yellow-800 transition-colors tooltip-btn" title="Sửa trạm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                        </button>
+                                        <?php endif; ?>
 
-                                    <!-- SỬA (KHÔNG CHO SỬA KHI BẢO TRÌ) -->
-                                    <?php if (!$s['is_maintenance']): ?>
-                                    <button onclick="openEditStationModal(
-                                        <?= $s['station_id'] ?>,
-                                        '<?= addslashes($s['station_name']) ?>',
-                                        '<?= addslashes($s['address']) ?>',
-                                        '<?= $s['latitude'] ?? '' ?>',
-                                        '<?= $s['longitude'] ?? '' ?>'
-                                    )" class="text-yellow-600 hover:text-yellow-800 mx-1" title="Sửa trạm">
-                                        <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M3 17.25V21h3.75L17.8 9.94l-3.75-3.75L3 17.25zM21.41 6.34a1.25 1.25 0 000-1.77l-2.98-2.98a1.25 1.25 0 00-1.77 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                        </svg>
-                                    </button>
-                                    <?php endif; ?>
-
-
-                                    <!-- BẢO TRÌ / KẾT THÚC BẢO TRÌ -->
-                                    <?php if (!$s['is_maintenance']): ?>
-                                    <a href="javascript:void(0)"
-                                        onclick="confirmSetMaintenance(<?= $s['station_id'] ?>)"
-                                        class="text-orange-600 hover:text-orange-800 mx-1" title="Chuyển sang bảo trì">
-                                        <!-- wrench -->
-                                        <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
-                                            <path
-                                                d="M22.7 19.3l-6.2-6.2a6 6 0 01-7.8-7.8l3.3 3.3 2.8-2.8-3.3-3.3a6 6 0 017.8 7.8l6.2 6.2-2.8 2.8z" />
-                                        </svg>
-                                    </a>
-                                    <?php else: ?>
-                                    <a href="javascript:void(0)"
-                                        onclick="confirmUnsetMaintenance(<?= $s['station_id'] ?>)"
-                                        class="text-green-600 hover:text-green-800 mx-1" title="Kết thúc bảo trì">
-                                        <!-- check -->
-                                        <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5L9 16.2z" />
-                                        </svg>
-                                    </a>
-                                    <?php endif; ?>
+                                        <!-- BẢO TRÌ / KẾT THÚC BẢO TRÌ -->
+                                        <?php if (!$s['is_maintenance']): ?>
+                                        <button type="button"
+                                            onclick="confirmSetMaintenance(<?= $s['station_id'] ?>)"
+                                            class="text-orange-600 hover:text-orange-800 transition-colors tooltip-btn" title="Chuyển sang bảo trì">
+                                            <!-- wrench (outline) -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </button>
+                                        <?php else: ?>
+                                        <button type="button"
+                                            onclick="confirmUnsetMaintenance(<?= $s['station_id'] ?>)"
+                                            class="text-green-600 hover:text-green-800 transition-colors tooltip-btn" title="Kết thúc bảo trì">
+                                            <!-- check (outline) -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </button>
+                                        <?php endif; ?>
 
 
-                                    <!-- XÓA (CHỈ KHI: KHÔNG XE + KHÔNG BẢO TRÌ) -->
-                                    <?php if ($s['total_vehicles'] == 0 && !$s['is_maintenance']): ?>
-                                    <a href="#" onclick="confirmDelete(<?= $s['station_id'] ?>)"
-                                        class="text-red-600 hover:text-red-800 mx-1">
-                                        <svg class="w-5 h-5 inline" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M6 7h12l-1 14H7L6 7zm3-3h6l1 2H8l1-2z" />
-                                        </svg>
-                                    </a>
-                                    <?php endif; ?>
+                                        <!-- XÓA (CHỈ KHI: KHÔNG XE + KHÔNG BẢO TRÌ) -->
+                                        <?php if ($s['total_vehicles'] == 0 && !$s['is_maintenance']): ?>
+                                        <button type="button" onclick="confirmDelete(<?= $s['station_id'] ?>)"
+                                            class="text-red-600 hover:text-red-800 transition-colors tooltip-btn" title="Xóa trạm">
+                                            <!-- trash (outline) -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                        <?php endif; ?>
+                                    </div>
 
                                 </td>
 

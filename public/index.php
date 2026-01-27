@@ -31,7 +31,7 @@
             <!-- Main Section -->
             <main class="flex-1 overflow-auto p-4 md:p-6 lg:p-8" style="margin-top: 76px;">
                 <!-- Hero Section -->
-                <section class="relative w-full h-[70vh] md:h-[85vh] overflow-hidden rounded-2xl shadow-xl mb-8">
+                <section class="relative w-full aspect-video md:aspect-auto md:h-[75vh] lg:h-[80vh] overflow-hidden rounded-2xl shadow-xl mb-8">
 
                     <!-- SLIDER -->
                     <img id="heroSlider" src="../assets/img/slide1.webp"
