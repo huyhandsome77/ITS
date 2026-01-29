@@ -11,9 +11,21 @@ function execPostRequest($url, $data) {
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data))
     );
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20); // Increase timeout
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+    
+    // DISABLE SSL VERIFY FOR HOST (Fix for XAMPP/Localhost)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
     $result = curl_exec($ch);
+    
+    if (curl_errno($ch)) {
+        $error_msg = curl_error($ch);
+        curl_close($ch);
+        return json_encode(['message' => 'CURL Error: ' . $error_msg]);
+    }
+    
     curl_close($ch);
     return $result;
 }

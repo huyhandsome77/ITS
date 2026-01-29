@@ -164,7 +164,8 @@
                                         '<?= addslashes($c['vehicle_name']) ?>',
                                         <?= $c['price_per_day'] ?>,
                                         <?= $c['price_per_hour'] ?>,
-                                        '<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : '' ?>'
+                                        '<?= $c['image'] ? '/ITS/assets/img/vehicles/'.$c['image'] : '' ?>',
+                                        'OTO'
                                     )" class="w-full py-2 rounded-lg text-white font-semibold"
                                         style="background:var(--primary-color)">Đặt lịch</button>
                                 </div>
@@ -228,7 +229,8 @@
                                         '<?= addslashes($b['vehicle_name']) ?>',
                                         <?= $b['price_per_day'] ?>,
                                         <?= $b['price_per_hour'] ?>,
-                                        '<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : '' ?>'
+                                        '<?= $b['image'] ? '/ITS/assets/img/vehicles/'.$b['image'] : '' ?>',
+                                        'XEMAY'
                                     )" class="w-full py-2 rounded-lg text-white font-semibold"
                                         style="background:var(--primary-color)">Đặt lịch</button>
                                 </div>
@@ -480,6 +482,19 @@
                         </div>
 
                         <div class="p-5 overflow-y-auto space-y-5">
+                            
+                            <!-- DEPOSIT POLICY ALERT -->
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm">
+                                <div class="flex items-center mb-2">
+                                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <h4 class="font-bold text-blue-800">Chính sách Cọc & Hoàn tiền</h4>
+                                </div>
+                                <ul class="text-sm text-blue-900 space-y-1 ml-1 list-disc list-inside">
+                                    <li><b>Cọc bắt buộc:</b> Xe máy 300k, Ô tô 500k (Hoàn 100% trong 1-3 ngày sau khi trả xe đúng hạn).</li>
+                                    <li><b>Trả muộn:</b> Tự động trừ vào tiền cọc.</li>
+                                    <li><b>Nợ xấu:</b> Khóa tài khoản vĩnh viễn và chuyển thu hồi nợ nếu không thanh toán đủ.</li>
+                                </ul>
+                            </div>
 
                             <!-- XE TYPE INFO -->
                             <div class="flex gap-4 bg-slate-50 p-4 rounded-xl">
@@ -738,8 +753,11 @@
         }, 300);
     }
 
+    let currentVehicleType = 'XEMAY'; // Default
+    let depositVal = 300000;
+
     /* ================= OPEN MODAL ================= */
-    function openBooking(vehicleId, name, pDay, pHour, image) {
+    function openBooking(vehicleId, name, pDay, pHour, image, type = 'XEMAY') {
         // Pre-fill
         if(image) m_img.src = image;
         else m_img.src = 'https://placehold.co/100x100?text=No+Image';
@@ -750,6 +768,10 @@
         priceDay = pDay;
         priceHour = pHour;
         currentVehicleName = name;
+        currentVehicleType = type;
+        
+        // Set Deposit
+        depositVal = (type === 'OTO' || type === 'CAR') ? 500000 : 300000;
         
         // Station ID check
         if(!currentStationId) {
@@ -966,7 +988,18 @@
             }
         }
         
-        document.getElementById('totalDisplay').innerText = amount.toLocaleString('vi-VN') + 'đ';
+        // Add Deposit
+        if(amount > 0) {
+            amount += depositVal;
+            document.getElementById('totalDisplay').innerHTML = `
+                <span class="block">${(amount - depositVal).toLocaleString('vi-VN')}đ (Thuê xe)</span>
+                <span class="block text-sm font-normal text-blue-600">+ ${depositVal.toLocaleString('vi-VN')}đ (Cọc)</span>
+                <span class="block border-t mt-1 pt-1 text-3xl text-red-600">= ${amount.toLocaleString('vi-VN')}đ</span>
+            `;
+        } else {
+            document.getElementById('totalDisplay').innerText = '0đ';
+        }
+
         formTotal.value = amount;
         
         if(t && document.getElementById('totalDisplay').innerText !== '0đ' && document.getElementById('totalDisplay').innerText !== 'Ngày trả phải sau ngày nhận'){

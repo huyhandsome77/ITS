@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/auth/check_permission.php';
+requireAdmin();
 $baseUrl = '../../../..'; 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/admin/xuly_review.php';
 ?>

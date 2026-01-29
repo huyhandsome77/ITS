@@ -14,6 +14,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/auth/check_permission.php';
+requireAdmin();
+?>
 <?php $baseUrl = '../../../..'; ?>
 <?php
 include '../../../php/admin/xuly_order.php';

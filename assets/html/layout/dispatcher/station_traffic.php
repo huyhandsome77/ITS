@@ -1,3 +1,7 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/auth/check_permission.php';
+requireDispatcher();
+?>
 <!doctype html>
 <html lang="vi" class="h-full">
 

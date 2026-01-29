@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/auth/check_permission.php';
+requireStation();
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_order.php';
 ?>

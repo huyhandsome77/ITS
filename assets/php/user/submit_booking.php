@@ -40,11 +40,36 @@ try {
     $conn->beginTransaction();
 
     // 1. LOCK the vehicle to prevent concurrent bookings
-    $stmtLock = $conn->prepare("SELECT vehicle_name FROM vehicles WHERE vehicle_id = ? FOR UPDATE");
+    $stmtLock = $conn->prepare("SELECT vehicle_name, vehicle_type FROM vehicles WHERE vehicle_id = ? FOR UPDATE");
     $stmtLock->execute([$vehicle_id]);
-    if ($stmtLock->rowCount() === 0) {
+    $vehicle = $stmtLock->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$vehicle) {
         throw new Exception("Xe không tồn tại.");
     }
+    
+    // Deposit Logic
+    $deposit_amount = 0;
+    $vType = strtoupper($vehicle['vehicle_type']); // OTO or XEMAY
+    
+    if ($vType === 'OTO' || $vType === 'CAR') {
+        $deposit_amount = 500000;
+    } else {
+        // Assume default is motorbike if not car, or check specifically
+        $deposit_amount = 300000;
+    }
+    
+    // Total Amount already includes deposit from frontend? 
+    // The user said "cộng vào tổng số tiền thanh toán" (add to total).
+    // If frontend sends total including deposit, we should verify it or just recalculate.
+    // It's safer to trust server calculation for deposit, but `total_amount` from POST usually includes rental fee.
+    // Let's assume `total_amount` from POST *should* be the final amount the user agreed to pay.
+    // However, to be safe, I should ensure `total_amount` >= deposit.
+    // OR better: `total_amount` = Rental Price + Deposit. 
+    // The `total_amount` from POST comes from `formTotal` which I will update in JS.
+    // So on server, I will just extract deposit from it or re-add it? 
+    // Actually, distinct separation is better. 
+    // Let's update `submit_booking.php` to SET `deposit_amount` in INSERT.
 
     // 2. RE-CHECK AVAILABILITY (Server-side validation)
     $req_start = "$start_date $start_time";
@@ -72,14 +97,14 @@ try {
     // If MoMo, maybe set status to PENDING_PAYMENT? For now stick to NEW for simplicity or logic consistency
     
     $sql = "INSERT INTO orders 
-            (order_code, station_id, user_id, vehicle_id, start_date, start_time, end_date, end_time, total_amount, status, payment_method)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', ?)";
+            (order_code, station_id, user_id, vehicle_id, start_date, start_time, end_date, end_time, total_amount, deposit_amount, status, payment_method)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NEW', ?)";
             
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         $order_code, $station_id, $user_id, $vehicle_id, 
         $start_date, $start_time, $end_date, $end_time, 
-        (float)$total_amount, $payment_method
+        (float)$total_amount, (float)$deposit_amount, $payment_method
     ]);
 
     $conn->commit();
@@ -95,7 +120,7 @@ try {
         } else {
             // MoMo Error
              echo "<script>
-                alert('Lỗi tạo thanh toán MoMo: " . ($momoRes['message'] ?? 'Unknown Error') . "');
+                alert('Lỗi tạo thanh toán MoMo: " . json_encode($momoRes) . "');
                 window.history.back();
             </script>";
             exit;

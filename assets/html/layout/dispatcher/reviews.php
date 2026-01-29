@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/auth/check_permission.php';
+requireDispatcher();
 // Include Dispatcher specific handling logic which contains helper functions and data fetching
 require_once dirname(__DIR__, 3) . '/php/dispatcher/xuly_dispatcher_review.php';
 ?>
