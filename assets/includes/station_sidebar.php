@@ -65,3 +65,4 @@ if (session_status() === PHP_SESSION_NONE) {
         </a>
     </nav>
 </aside>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

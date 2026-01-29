@@ -321,27 +321,24 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_v
 
     <script src="../../../js/main.js"></script>
     <script>
-        // Custom notification
+        // Notification using SweetAlert2 Toast
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg z-50 animate-fade-in ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } text-white`;
-            notification.innerHTML = `
-                <div class="flex items-center space-x-3">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        ${type === 'success' 
-                            ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>'
-                            : '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>'
-                        }
-                    </svg>
-                    <span class="font-semibold">${message}</span>
-                </div>
-            `;
-            document.body.appendChild(notification);
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
+            Toast.fire({
+                icon: type,
+                title: message
+            });
         }
 
         // Add/Edit Modal handling
@@ -483,30 +480,41 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_v
         // Toggle maintenance status
         function toggleMaintenance(vehicleId, newStatus) {
             const statusText = newStatus === 'MAINTENANCE' ? 'chuyển sang bảo trì' : 'kết thúc bảo trì';
-            
-            if (confirm(`Bạn có chắc chắn muốn ${statusText} xe này?`)) {
-                // Send AJAX request to update status
-                fetch('../../../php/station/update_vehicle_status.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `vehicle_id=${vehicleId}&status=${newStatus}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showNotification(data.message || 'Cập nhật trạng thái thành công!', 'success');
-                        setTimeout(() => location.reload(), 1500);
-                    } else {
-                        showNotification(data.message || 'Có lỗi xảy ra!', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showNotification('Không thể kết nối đến server!', 'error');
-                });
-            }
+
+            Swal.fire({
+                title: 'Xác nhận',
+                text: `Bạn có chắc chắn muốn ${statusText} xe này?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#f97316',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                     // Send AJAX request to update status
+                    fetch('../../../php/station/update_vehicle_status.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `vehicle_id=${vehicleId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showNotification(data.message || 'Cập nhật trạng thái thành công!', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showNotification(data.message || 'Có lỗi xảy ra!', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Không thể kết nối đến server!', 'error');
+                    });
+                }
+            });
         }
     </script>
 </body>

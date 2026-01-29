@@ -618,7 +618,8 @@
 
             </main>
 
-            <?php include '../../../includes/footer.php'; ?>
+      <!-- Footer -->
+    <?php include '../../../includes/footer.php'; ?>
 
     <!-- Review Modal -->
     <div id="reviewModal" class="fixed inset-0 hidden z-[9999] flex items-center justify-center px-4">
@@ -650,8 +651,6 @@
                 Chỉ khách hàng đã thuê xe mới có thể viết đánh giá.
             </div>
         </div>
-    </div>
-    </div>
     </div>
     <script src="../../../js/main.js"></script>
     <!-- ================= JS ================= -->
@@ -758,7 +757,12 @@
         }
         
         if(!currentStationId) {
-            alert("Vui lòng chọn trạm trước!");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Chưa chọn trạm!',
+                text: 'Vui lòng chọn trạm xe trước khi đặt lịch.',
+                confirmButtonColor: '#3085d6'
+            });
             return;
         }
 
@@ -1141,6 +1145,14 @@
                                             </div>
                                         </div>
                                         <p class="text-gray-700 leading-relaxed">${r.comment || '<span class="italic text-gray-400">Không có nhận xét</span>'}</p>
+                                        
+                                        ${r.reply ? `
+                                            <div class="mt-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                                                <p class="text-xs font-bold text-blue-800 mb-1">💬 Admin phản hồi:</p>
+                                                <p class="text-sm text-gray-700">${r.reply}</p>
+                                                <p class="text-xs text-gray-400 mt-1 text-right">${new Date(r.replied_at).toLocaleDateString('vi-VN')}</p>
+                                            </div>
+                                        ` : ''}
                                     </div>
                                 </div>
                             </div>

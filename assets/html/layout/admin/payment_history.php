@@ -305,19 +305,46 @@
     <script src="../../../js/main.js"></script>
     <script>
         function viewPayment(id) {
-            alert('Xem chi tiết giao dịch #PAY00' + id);
+            Swal.fire({
+                title: 'Chi tiết giao dịch',
+                text: 'Xem chi tiết giao dịch #PAY00' + id,
+                icon: 'info',
+                confirmButtonColor: '#3085d6'
+            });
         }
 
         function confirmPayment(id) {
-            if (confirm('Xác nhận giao dịch này đã hoàn tất?')) {
-                alert('Chức năng sẽ được triển khai ở backend!');
-            }
+            Swal.fire({
+                title: 'Xác nhận',
+                text: 'Xác nhận giao dịch này đã hoàn tất?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Thông báo', 'Chức năng sẽ được triển khai ở backend!', 'info');
+                }
+            });
         }
 
         function retryPayment(id) {
-            if (confirm('Thử lại giao dịch này?')) {
-                alert('Chức năng sẽ được triển khai ở backend!');
-            }
+            Swal.fire({
+                title: 'Thử lại',
+                text: 'Thử lại giao dịch này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Thử lại',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Thông báo', 'Chức năng sẽ được triển khai ở backend!', 'info');
+                }
+            });
         }
     </script>
 </body>

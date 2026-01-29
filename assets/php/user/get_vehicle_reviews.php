@@ -26,6 +26,8 @@ try {
         SELECT 
             r.rating,
             r.comment,
+            r.reply,
+            r.replied_at,
             r.created_at,
             u.full_name,
             u.avatar

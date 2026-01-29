@@ -64,3 +64,4 @@ require_once __DIR__ . '/../bootstrap.php';?>
 
     </nav>
 </aside>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

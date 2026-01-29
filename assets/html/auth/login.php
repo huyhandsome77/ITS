@@ -60,29 +60,7 @@ if (isset($_SESSION['user_id'])) {
                     <p class="text-gray-600 text-sm">Chào mừng bạn trở lại!</p>
                 </div>
 
-                <?php
-                // Display success message from signup
-                if (isset($_SESSION['signup_success'])) {
-                    echo '<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded" role="alert">';
-                    echo '<p class="font-bold">Thành công!</p>';
-                    echo '<p>' . htmlspecialchars($_SESSION['signup_success']) . '</p>';
-                    echo '</div>';
-                    unset($_SESSION['signup_success']);
-                }
-                
-                // Display errors
-                if (isset($_SESSION['login_errors'])) {
-                    echo '<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">';
-                    echo '<p class="font-bold">Lỗi:</p>';
-                    echo '<ul class="list-disc list-inside">';
-                    foreach ($_SESSION['login_errors'] as $error) {
-                        echo '<li>' . htmlspecialchars($error) . '</li>';
-                    }
-                    echo '</ul>';
-                    echo '</div>';
-                    unset($_SESSION['login_errors']);
-                }
-                ?>
+
 
                 <!-- Email -->
                 <div>
@@ -191,6 +169,7 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../js/main.js"></script>
     <script>
     // Simple form validation
@@ -200,16 +179,61 @@ if (isset($_SESSION['user_id'])) {
 
         if (!email || !password) {
             e.preventDefault();
-            alert('Vui lòng điền đầy đủ thông tin!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Thiếu thông tin!',
+                text: 'Vui lòng điền đầy đủ email và mật khẩu!',
+                confirmButtonColor: '#3085d6'
+            });
             return false;
         }
 
         if (password.length < 8) {
             e.preventDefault();
-            alert('Mật khẩu phải có ít nhất 8 ký tự!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Mật khẩu quá ngắn!',
+                text: 'Mật khẩu phải có ít nhất 8 ký tự!',
+                confirmButtonColor: '#3085d6'
+            });
             return false;
         }
     });
+
+    <?php
+    // Display success message from signup
+    if (isset($_SESSION['signup_success'])) {
+        $msg = addslashes($_SESSION['signup_success']);
+        echo "
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: '$msg',
+            confirmButtonColor: '#10b981'
+        });
+        ";
+        unset($_SESSION['signup_success']);
+    }
+    
+    // Display errors
+    if (isset($_SESSION['login_errors'])) {
+        $errorMsg = "";
+        foreach ($_SESSION['login_errors'] as $error) {
+            $errorMsg .= $error . "\\n";
+        }
+        $errorMsg = addslashes($errorMsg);
+        
+        echo "
+        Swal.fire({
+            icon: 'error',
+            title: 'Đăng nhập thất bại!',
+            html: '" . str_replace("\\n", "<br>", $errorMsg) . "',
+            confirmButtonColor: '#d33'
+        });
+        ";
+        unset($_SESSION['login_errors']);
+    }
+    ?>
     </script>
 </body>
 

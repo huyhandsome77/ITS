@@ -355,31 +355,80 @@
     <script src="../../../js/main.js"></script>
     <script>
     function viewReview(id) {
-        alert('Xem chi tiết đánh giá #' + id);
+        Swal.fire({
+            title: 'Chi tiết đánh giá',
+            text: 'Xem chi tiết đánh giá #' + id,
+            icon: 'info',
+            confirmButtonColor: '#3085d6'
+        });
     }
 
     function approveReview(id) {
-        if (confirm('Duyệt đánh giá này?')) {
-            alert('Chức năng sẽ được triển khai ở backend!');
-        }
+        Swal.fire({
+            title: 'Duyệt đánh giá?',
+            text: "Đánh giá sẽ được hiển thị công khai.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Duyệt',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Thành công!', 'Chức năng sẽ được triển khai ở backend!', 'success');
+            }
+        })
     }
 
     function rejectReview(id) {
-        if (confirm('Từ chối đánh giá này?')) {
-            alert('Chức năng sẽ được triển khai ở backend!');
-        }
+         Swal.fire({
+            title: 'Từ chối đánh giá?',
+            text: "Đánh giá sẽ bị từ chối.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Từ chối',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Đã từ chối!', 'Chức năng sẽ được triển khai ở backend!', 'success');
+            }
+        })
     }
 
     function hideReview(id) {
-        if (confirm('Ẩn đánh giá này khỏi công khai?')) {
-            alert('Chức năng sẽ được triển khai ở backend!');
-        }
+        Swal.fire({
+            title: 'Ẩn đánh giá?',
+            text: "Đánh giá sẽ bị ẩn khỏi công khai.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#fbbf24',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ẩn',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Đã ẩn!', 'Chức năng sẽ được triển khai ở backend!', 'success');
+            }
+        })
     }
 
     function deleteReview(id) {
-        if (confirm('Xóa đánh giá này vĩnh viễn? Hành động này không thể hoàn tác!')) {
-            alert('Chức năng sẽ được triển khai ở backend!');
-        }
+        Swal.fire({
+            title: 'Xóa đánh giá?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa vĩnh viễn',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire('Đã xóa!', 'Chức năng sẽ được triển khai ở backend!', 'success');
+            }
+        })
     }
     </script>
 </body>

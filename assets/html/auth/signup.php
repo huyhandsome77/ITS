@@ -61,23 +61,11 @@ if (isset($_SESSION['user_id'])) {
                     </div>
 
                     <?php
-                    // Display errors
-                    if (isset($_SESSION['signup_errors'])) {
-                        echo '<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">';
-                        echo '<p class="font-bold">Lỗi:</p>';
-                        echo '<ul class="list-disc list-inside">';
-                        foreach ($_SESSION['signup_errors'] as $error) {
-                            echo '<li>' . htmlspecialchars($error) . '</li>';
-                        }
-                        echo '</ul>';
-                        echo '</div>';
-                        unset($_SESSION['signup_errors']);
-                    }
-                    
                     // Get old data if exists
                     $old_data = $_SESSION['signup_data'] ?? [];
                     unset($_SESSION['signup_data']);
                     ?>
+
 
                     <!-- Full Name -->
                     <div>
@@ -234,6 +222,7 @@ if (isset($_SESSION['user_id'])) {
     </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../js/main.js"></script>
     <script>
     // Simple form validation
@@ -244,22 +233,58 @@ if (isset($_SESSION['user_id'])) {
 
         if (password !== confirmPassword) {
             e.preventDefault();
-            alert('Mật khẩu xác nhận không khớp!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Mật khẩu không khớp!',
+                text: 'Vui lòng kiểm tra lại mật khẩu xác nhận.',
+                confirmButtonColor: '#d33'
+            });
             return false;
         }
 
         if (password.length < 8) {
             e.preventDefault();
-            alert('Mật khẩu phải có ít nhất 8 ký tự!');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Mật khẩu quá ngắn!',
+                text: 'Mật khẩu phải có ít nhất 8 ký tự!',
+                confirmButtonColor: '#3085d6'
+            });
             return false;
         }
 
         if (!terms) {
             e.preventDefault();
-            alert('Vui lòng đồng ý với điều khoản dịch vụ!');
+             Swal.fire({
+                icon: 'warning',
+                title: 'Chưa đồng ý điều khoản!',
+                text: 'Bạn cần đồng ý với điều khoản dịch vụ để tiếp tục.',
+                confirmButtonColor: '#3085d6'
+            });
             return false;
         }
     });
+
+    <?php
+    // Display errors
+    if (isset($_SESSION['signup_errors'])) {
+        $errorMsg = "";
+        foreach ($_SESSION['signup_errors'] as $error) {
+            $errorMsg .= $error . "\\n";
+        }
+        $errorMsg = addslashes($errorMsg);
+        
+        echo "
+        Swal.fire({
+            icon: 'error',
+            title: 'Đăng ký thất bại!',
+            html: '" . str_replace("\\n", "<br>", $errorMsg) . "',
+            confirmButtonColor: '#d33'
+        });
+        ";
+        unset($_SESSION['signup_errors']);
+    }
+    ?>
     </script>
 </body>
 

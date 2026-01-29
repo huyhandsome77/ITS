@@ -406,13 +406,24 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_o
 
     <script src="../../../js/main.js"></script>
     <script>
-        // Notification function
+        // Notification using SweetAlert2 Toast
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
         function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
+            Toast.fire({
+                icon: type,
+                title: message
+            });
         }
 
         // Modal handling for Create Order
@@ -456,7 +467,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_o
         // Form submit
         document.getElementById('orderForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            showNotification('Chức năng tạo đơn sẽ được triển khai sau!', 'success');
+            showNotification('Chức năng tạo đơn sẽ được triển khai sau!', 'info');
             orderModal.classList.add('hidden');
         });
 
@@ -579,31 +590,79 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/ITS/assets/php/station/xuly_station_o
 
         // Confirm pickup
         function confirmPickup(orderCode) {
-            if (confirm('Xác nhận khách đã nhận xe?')) {
-                updateOrderStatus(orderCode, 'confirm_pickup');
-            }
+            Swal.fire({
+                title: 'Xác nhận',
+                text: 'Xác nhận khách đã nhận xe?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateOrderStatus(orderCode, 'confirm_pickup');
+                }
+            });
         }
 
         // Confirm return
         function confirmReturn(orderCode) {
-            if (confirm('Xác nhận khách đã trả xe?')) {
-                updateOrderStatus(orderCode, 'confirm_return');
-            }
+            Swal.fire({
+                title: 'Xác nhận',
+                text: 'Xác nhận khách đã trả xe?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateOrderStatus(orderCode, 'confirm_return');
+                }
+            });
         }
 
         // Complete order
         function completeOrder(orderCode) {
-            if (confirm('Xác nhận hoàn thành đơn hàng?')) {
-                updateOrderStatus(orderCode, 'complete_order');
-            }
+            Swal.fire({
+                title: 'Xác nhận',
+                text: 'Xác nhận hoàn thành đơn hàng?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateOrderStatus(orderCode, 'complete_order');
+                }
+            });
         }
 
         // Cancel order
         function cancelOrder(orderCode) {
-            const reason = prompt('Nhập lý do hủy đơn:');
-            if (reason) {
-                updateOrderStatus(orderCode, 'cancel_order', reason);
-            }
+            Swal.fire({
+                title: 'Hủy đơn hàng',
+                input: 'text',
+                inputLabel: 'Lý do hủy đơn',
+                inputPlaceholder: 'Nhập lý do...',
+                showCancelButton: true,
+                confirmButtonText: 'Hủy đơn',
+                cancelButtonText: 'Quay lại',
+                confirmButtonColor: '#d33',
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Bạn cần nhập lý do!'
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    updateOrderStatus(orderCode, 'cancel_order', result.value);
+                }
+            });
         }
 
         // Update order status

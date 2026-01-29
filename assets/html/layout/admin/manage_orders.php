@@ -274,7 +274,7 @@ include '../../../php/admin/xuly_order.php';
                                             <?php if ($order['status'] === 'NEW'): ?>
                                             <a href="/ITS/assets/php/admin/cancel_order.php?code=<?= $order['order_code'] ?>"
                                                 class="text-red-600 hover:text-red-800 transition-colors tooltip-btn"
-                                                onclick="return confirm('Bạn có chắc muốn hủy đơn này?')" title="Hủy đơn">
+                                                onclick="confirmLink(event, 'Bạn có chắc muốn hủy đơn này?')" title="Hủy đơn">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
@@ -285,7 +285,7 @@ include '../../../php/admin/xuly_order.php';
                                             <?php if ($order['status'] === 'WAITING_RETURN'): ?>
                                             <a href="/ITS/assets/php/admin/return_order.php?code=<?= $order['order_code'] ?>"
                                                 class="text-green-600 hover:text-green-800 transition-colors tooltip-btn"
-                                                onclick="return confirm('Xác nhận khách đã trả xe?')" title="Xác nhận trả xe">
+                                                onclick="confirmLink(event, 'Xác nhận khách đã trả xe?')" title="Xác nhận trả xe">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                 </svg>
@@ -417,6 +417,25 @@ include '../../../php/admin/xuly_order.php';
 
                 document.getElementById('viewOrderModal').classList.remove('hidden');
             });
+    }
+
+    function confirmLink(event, message) {
+        event.preventDefault();
+        const url = event.currentTarget.getAttribute('href');
+        Swal.fire({
+            title: 'Xác nhận',
+            text: message,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
     }
 
     function closeOrderModal() {
