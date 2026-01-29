@@ -1,0 +1,42 @@
+/* Vehicle Slider Styles - Prevent Overflow */
+
+/* Ensure main container doesn't overflow */
+#app {
+    overflow-x: hidden;
+}
+
+#contentWrapper {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+main {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Vehicle slider specific styles */
+#vehicleSlider {
+    will-change: transform;
+}
+
+/* Prevent horizontal scroll on mobile */
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    html {
+        overflow-x: hidden;
+    }
+}
+
+/* Smooth transitions */
+#vehicleSlider > div {
+    transition: transform 0.3s ease;
+}
+
+/* Fix for hover scale not causing overflow */
+#vehicleSlider > div > div:hover {
+    z-index: 10;
+}

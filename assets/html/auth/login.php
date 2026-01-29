@@ -201,6 +201,20 @@ if (isset($_SESSION['user_id'])) {
     });
 
     <?php
+    // Display login message (e.g., from booking redirect)
+    if (isset($_SESSION['login_message'])) {
+        $msg = addslashes($_SESSION['login_message']);
+        echo "
+        Swal.fire({
+            icon: 'info',
+            title: 'Thông báo',
+            text: '$msg',
+            confirmButtonColor: '#3085d6'
+        });
+        ";
+        unset($_SESSION['login_message']);
+    }
+    
     // Display success message from signup
     if (isset($_SESSION['signup_success'])) {
         $msg = addslashes($_SESSION['signup_success']);

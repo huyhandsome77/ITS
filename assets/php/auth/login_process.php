@@ -84,7 +84,23 @@ try {
         // For now, we'll just set the cookie
     }
     
-    // Redirect based on role
+    // Check if there's pending booking data (user tried to book before login)
+    if (isset($_SESSION['pending_booking_data'])) {
+        // User was trying to book a vehicle, redirect back to booking page
+        // The booking page should check for pending_booking_data and restore the form
+        header('Location: /ITS/assets/html/layout/user/list_car.php?restore_booking=1');
+        exit();
+    }
+    
+    // Check if there's a redirect URL stored (e.g., from booking page)
+    if (isset($_SESSION['redirect_after_login'])) {
+        $redirectUrl = $_SESSION['redirect_after_login'];
+        unset($_SESSION['redirect_after_login']); // Clear it after use
+        header('Location: ' . $redirectUrl);
+        exit();
+    }
+    
+    // Default redirect based on role
     if ($user['role'] === 'ADMIN') {
         header('Location: ../../../public/index.php?page=admin_dashboard');
     } elseif ($user['role'] === 'OWNER') {

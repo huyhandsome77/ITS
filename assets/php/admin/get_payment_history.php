@@ -32,37 +32,50 @@ try {
         $params[':to_date'] = $toDate;
     }
 
-    // Filter by Status (Mapping result_code)
-    // 0 = Success, != 0 = Fail/Pending? 
-    // For simplicity: 0 is Completed. Others Failed. 
-    // If pending is needed, we might need to check standard MoMo codes (e.g. 1000, 9000).
-    // Assuming 0 is SUCCESS.
-    if ($status) {
-        if ($status === 'completed') {
-            $where[] = "pt.result_code = 0";
-        } elseif ($status === 'failed') {
-            $where[] = "pt.result_code != 0";
-        }
-        // Add more logic if we have specific codes for pending
+    // Filter by Status (payment_status from orders table)
+    // Filter by Status (based on transaction result_code)
+    if ($status === 'success') {
+        $where[] = "pt.result_code = 0";
+    } elseif ($status === 'pending') {
+        // Only show pending for CASH or where result_code is -1
+        $where[] = "pt.result_code = -1";
+    } elseif ($status === 'failed') {
+        // Anything not 0 or -1 is considered failed
+        $where[] = "pt.result_code NOT IN (0, -1)";
     }
 
     $whereSql = implode(' AND ', $where);
 
     // 2. Stats Query
-    // Total Revenue (Only success)
-    $stmtRevenue = $conn->prepare("SELECT SUM(amount) FROM payment_transactions pt WHERE result_code = 0");
+    // Total Revenue (Only PAID orders)
+    $stmtRevenue = $conn->prepare("
+        SELECT SUM(o.total_amount) 
+        FROM orders o 
+        WHERE o.payment_status = 'PAID'
+    ");
     $stmtRevenue->execute();
     $totalRevenue = $stmtRevenue->fetchColumn() ?: 0;
 
-    // Total Transactions
-    $stmtTotal = $conn->prepare("SELECT COUNT(*) FROM payment_transactions pt WHERE 1=1"); // Total count, filtered or unfiltered? Usually stats are overall.
+    // Total Orders
+    $stmtTotal = $conn->prepare("SELECT COUNT(*) FROM orders");
     $stmtTotal->execute();
     $totalTransactions = $stmtTotal->fetchColumn();
 
-    // Today's Transactions
-    $stmtToday = $conn->prepare("SELECT COUNT(*) FROM payment_transactions WHERE DATE(created_at) = CURDATE()");
+    // Today's Orders
+    $stmtToday = $conn->prepare("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()");
     $stmtToday->execute();
     $todayTransactions = $stmtToday->fetchColumn();
+
+    // UNPAID Orders
+    $stmtUnpaid = $conn->prepare("SELECT COUNT(*) FROM orders WHERE payment_status = 'UNPAID'");
+    $stmtUnpaid->execute();
+    $unpaidOrders = $stmtUnpaid->fetchColumn();
+
+    // REFUNDED Orders
+    $stmtRefunded = $conn->prepare("SELECT COUNT(*) FROM orders WHERE payment_status = 'REFUNDED'");
+    $stmtRefunded->execute();
+    $refundedOrders = $stmtRefunded->fetchColumn();
+
 
     // 3. Data Query
     $sql = "
@@ -77,7 +90,9 @@ try {
             pt.created_at,
             u.full_name,
             u.phone,
-            o.order_id
+            o.order_id,
+            o.payment_status,
+            o.payment_method
         FROM payment_transactions pt
         LEFT JOIN orders o ON pt.order_code COLLATE utf8mb4_unicode_ci = o.order_code
         LEFT JOIN users u ON o.user_id = u.user_id
@@ -118,7 +133,9 @@ try {
         'stats' => [
             'total_revenue' => $totalRevenue,
             'total_transactions' => $totalTransactions,
-            'today_transactions' => $todayTransactions
+            'today_transactions' => $todayTransactions,
+            'unpaid_orders' => $unpaidOrders,
+            'refunded_orders' => $refundedOrders
         ]
     ]);
 

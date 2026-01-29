@@ -13,8 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    die("Vui lòng đăng nhập"); 
+    // Store the booking form data to restore after login
+    $_SESSION['pending_booking_data'] = $_POST;
+    $_SESSION['login_message'] = 'Vui lòng đăng nhập để tiếp tục đặt xe';
+    
+    // Redirect to login page
+    header('Location: /ITS/assets/html/auth/login.php');
+    exit;
 }
 
 $user_id = $_SESSION['user_id'];
@@ -94,7 +101,22 @@ try {
             exit;
         }
     } else {
-        // CASH
+        // CASH - Create payment transaction record for history tracking
+        $insertTxn = $conn->prepare("
+            INSERT INTO payment_transactions 
+            (order_code, payment_type, amount, trans_id, result_code, message) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        
+        $insertTxn->execute([
+            $order_code,
+            'CASH',
+            (float)$total_amount,
+            NULL,  // No external transaction ID for cash payments
+            -1,    // -1 = Pending payment (will be confirmed at station)
+            'Thanh toán tiền mặt tại trạm'
+        ]);
+        
         header("Location: /ITS/assets/html/layout/user/payment_result.php?status=success&order_code=$order_code&amount=$total_amount");
         exit;
     }

@@ -79,9 +79,9 @@
                     <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-yellow-100 text-sm">Chờ xác nhận</p>
-                                <h3 class="text-3xl font-bold mt-1">28</h3>
-                                <p class="text-yellow-100 text-xs mt-1">Cần xử lý trong ngày</p>
+                                <p class="text-yellow-100 text-sm">Chưa thanh toán</p>
+                                <h3 class="text-3xl font-bold mt-1">0</h3>
+                                <p class="text-yellow-100 text-xs mt-1">Đơn hàng chưa thanh toán</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -94,9 +94,9 @@
                     <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-red-100 text-sm">Thất bại</p>
-                                <h3 class="text-3xl font-bold mt-1">15</h3>
-                                <p class="text-red-100 text-xs mt-1">0.4% tỷ lệ lỗi</p>
+                                <p class="text-red-100 text-sm">Đã hoàn tiền</p>
+                                <h3 class="text-3xl font-bold mt-1">0</h3>
+                                <p class="text-red-100 text-xs mt-1">Đơn hàng đã hoàn tiền</p>
                             </div>
                             <div class="bg-white bg-opacity-20 p-3 rounded-lg">
                                 <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
@@ -110,33 +110,39 @@
                 <!-- Filter Section -->
                 <section class="bg-white rounded-2xl shadow-sm border p-5 mb-6">
                     <h2 class="text-lg font-semibold mb-4">Bộ lọc</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                         <select id="filterStatus" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="completed">Thành công</option>
+                            <option value="success">Thành công</option>
                             <option value="pending">Chờ xác nhận</option>
-                            <option value="processing">Đang xử lý</option>
                             <option value="failed">Thất bại</option>
-                            <option value="refunded">Đã hoàn tiền</option>
                         </select>
 
                         <select id="filterMethod" class="border rounded-lg px-4 py-2">
                             <option value="">Tất cả phương thức</option>
-                            <option value="cash">Tiền mặt</option>
-                            <option value="transfer">Chuyển khoản</option>
-                            <option value="credit">Thẻ tín dụng</option>
-                            <option value="ewallet">Ví điện tử</option>
+                            <option value="CASH">Tiền mặt</option>
+                            <option value="MOMO">MoMo</option>
+                            <option value="TRANSFER">Chuyển khoản</option>
+                            <option value="CREDIT">Thẻ tín dụng</option>
+                            <option value="EWALLET">Ví điện tử</option>
                         </select>
 
                         <input type="date" id="filterFromDate" class="border rounded-lg px-4 py-2" placeholder="Từ ngày">
 
                         <input type="date" id="filterToDate" class="border rounded-lg px-4 py-2" placeholder="Đến ngày">
 
-                        <button class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
+                        <button id="filterButton" class="px-6 py-2 rounded-lg font-semibold text-white" style="background: var(--primary-color);">
                             <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                             </svg>
                             Lọc
+                        </button>
+
+                        <button id="resetButton" class="px-6 py-2 rounded-lg font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200">
+                            <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                            </svg>
+                            Xóa lọc
                         </button>
                     </div>
                 </section>
@@ -145,7 +151,7 @@
                 <section class="bg-white rounded-2xl shadow-sm border p-5">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-lg font-semibold">Danh sách giao dịch</h2>
-                        <span class="text-gray-600">Tổng số: <strong>3,847</strong> giao dịch</span>
+                        <span class="text-gray-600">Tổng số: <strong id="totalCount">0</strong> giao dịch</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -302,51 +308,9 @@
         </div>
     </div>
 
+
     <script src="../../../js/main.js"></script>
-    <script>
-        function viewPayment(id) {
-            Swal.fire({
-                title: 'Chi tiết giao dịch',
-                text: 'Xem chi tiết giao dịch #PAY00' + id,
-                icon: 'info',
-                confirmButtonColor: '#3085d6'
-            });
-        }
-
-        function confirmPayment(id) {
-            Swal.fire({
-                title: 'Xác nhận',
-                text: 'Xác nhận giao dịch này đã hoàn tất?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#10b981',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Đồng ý',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('Thông báo', 'Chức năng sẽ được triển khai ở backend!', 'info');
-                }
-            });
-        }
-
-        function retryPayment(id) {
-            Swal.fire({
-                title: 'Thử lại',
-                text: 'Thử lại giao dịch này?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#f59e0b',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Thử lại',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('Thông báo', 'Chức năng sẽ được triển khai ở backend!', 'info');
-                }
-            });
-        }
-    </script>
+    <script src="../../../js/admin/payment_history.js"></script>
 </body>
 
 </html>

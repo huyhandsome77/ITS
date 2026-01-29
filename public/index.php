@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/slider-fix.css">
     <script src="../assets/js/index.js?v=<?= time() ?>" defer></script>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -84,122 +85,34 @@
 
 
 
-                <!-- Featured Vehicles Section -->
-                <section class="mb-8">
-                    <h3 id="featuredTitle" class="text-2xl md:text-3xl font-bold mb-6"></h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                        <!-- Vehicle Card 1 -->
-                        <div class="vehicle-card bg-white rounded-xl shadow-lg overflow-hidden animate-fadeInUp"
-                            style="animation-delay: 0.1s;">
-                            <div class="h-48 flex items-center justify-center relative"
-                                style="background: var(--accent-gradient);">
-                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold"
-                                    style="color: var(--primary-color);">
-                                    ⭐ Phổ biến</div>
-                                <svg class="w-24 h-24 text-white drop-shadow-2xl" fill="currentColor"
-                                    viewbox="0 0 24 24">
-                                    <path
-                                        d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+                <!-- Featured Vehicles Slider Section -->
+                <section class="mb-8 overflow-hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl md:text-3xl font-bold">🚗 Xe nổi bật</h3>
+                        <div class="flex gap-2">
+                            <button id="prevSlide" class="w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center hover:scale-110" style="color: rgb(0, 102, 102);">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                 </svg>
-                            </div>
-                            <div class="p-6">
-                                <h4 class="text-xl font-bold mb-2 text-gray-800">🚗 Toyota Camry</h4>
-                                <p class="text-gray-600 mb-4 text-sm">Sedan sang trọng, phù hợp đi công tác</p>
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded">5 chỗ</span>
-                                    <span class="text-xs bg-green-50 text-green-600 px-2 py-1 rounded">Tự động</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Chỉ từ</p>
-                                        <span class="text-2xl font-bold bg-clip-text text-transparent"
-                                            style="background-image: var(--hover-gradient);">800.000₫</span>
-                                        <span class="text-xs text-gray-500">/ngày</span>
-                                    </div>
-                                    <button
-                                        class="px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg"
-                                        style="background: var(--primary-color);">
-                                        Thuê ngay
-                                    </button>
-                                </div>
-                            </div>
-                        </div><!-- Vehicle Card 2 -->
-                        <div class="vehicle-card bg-white rounded-xl shadow-lg overflow-hidden animate-fadeInUp"
-                            style="animation-delay: 0.2s;">
-                            <div class="h-48 flex items-center justify-center relative"
-                                style="background: var(--accent-gradient);">
-                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold"
-                                    style="color: var(--primary-color);">
-                                    👨‍👩‍👧‍👦 Gia đình</div>
-                                <svg class="w-24 h-24 text-white drop-shadow-2xl" fill="currentColor"
-                                    viewbox="0 0 24 24">
-                                    <path
-                                        d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
+                            </button>
+                            <button id="nextSlide" class="w-10 h-10 rounded-full bg-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center hover:scale-110" style="color: rgb(0, 102, 102);">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                 </svg>
-                            </div>
-                            <div class="p-6">
-                                <h4 class="text-xl font-bold mb-2 text-gray-800">🚙 Honda CR-V</h4>
-                                <p class="text-gray-600 mb-4 text-sm">SUV rộng rãi cho gia đình</p>
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="text-xs bg-blue-50 px-2 py-1 rounded"
-                                        style="color: var(--primary-color);">7
-                                        chỗ</span>
-                                    <span class="text-xs bg-blue-50 px-2 py-1 rounded"
-                                        style="color: var(--primary-color);">Tự
-                                        động</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Chỉ từ</p>
-                                        <span class="text-2xl font-bold bg-clip-text text-transparent"
-                                            style="background-image: var(--hover-gradient);">950.000₫</span>
-                                        <span class="text-xs text-gray-500">/ngày</span>
-                                    </div>
-                                    <button
-                                        class="px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg"
-                                        style="background: var(--primary-color);">
-                                        Thuê ngay
-                                    </button>
-                                </div>
-                            </div>
-                        </div><!-- Vehicle Card 3 -->
-                        <div class="vehicle-card bg-white rounded-xl shadow-lg overflow-hidden animate-fadeInUp"
-                            style="animation-delay: 0.3s;">
-                            <div class="h-48 flex items-center justify-center relative"
-                                style="background: var(--accent-gradient);">
-                                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold"
-                                    style="color: var(--primary-color);">
-                                    🔥 Hot</div>
-                                <svg class="w-24 h-24 text-white drop-shadow-2xl" fill="currentColor"
-                                    viewbox="0 0 24 24">
-                                    <path
-                                        d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                                </svg>
-                            </div>
-                            <div class="p-6">
-                                <h4 class="text-xl font-bold mb-2 text-gray-800">🏎️ Mazda CX-5</h4>
-                                <p class="text-gray-600 mb-4 text-sm">Crossover thể thao, hiện đại</p>
-                                <div class="flex items-center gap-2 mb-4">
-                                    <span class="text-xs bg-blue-50 px-2 py-1 rounded"
-                                        style="color: var(--primary-color);">5
-                                        chỗ</span>
-                                    <span class="text-xs bg-orange-50 text-orange-600 px-2 py-1 rounded">Thể thao</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-xs text-gray-500">Chỉ từ</p>
-                                        <span class="text-2xl font-bold bg-clip-text text-transparent"
-                                            style="background-image: var(--hover-gradient);">900.000₫</span>
-                                        <span class="text-xs text-gray-500">/ngày</span>
-                                    </div>
-                                    <button
-                                        class="px-6 py-2 rounded-lg text-white font-semibold hover:opacity-90 transition shadow-md hover:shadow-lg"
-                                        style="background: var(--primary-color);">
-                                        Thuê ngay
-                                    </button>
-                                </div>
-                            </div>
+                            </button>
                         </div>
+                    </div>
+                    
+                    <!-- Slider Container -->
+                    <div class="relative overflow-hidden w-full">
+                        <div id="vehicleSlider" class="flex transition-transform duration-500 ease-in-out">
+                            <!-- Vehicle cards will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Slider Indicators -->
+                    <div id="sliderIndicators" class="flex justify-center gap-2 mt-6">
+                        <!-- Indicators will be dynamically inserted here -->
                     </div>
                 </section>
             </main>
@@ -208,6 +121,7 @@
         </div>
     </div>
     <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/vehicle-slider.js"></script>
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
