@@ -33,8 +33,8 @@ logTransaction($conn, $orderCode, $amount, $transId, $resultCode, $message);
 if ($resultCode == '0') {
     try {
         // Update Order to DEPOSIT_PAID or similar to indicate success
-        // Set Payment Method to MOMO_ATM or MOMO_QR ?
-        $stmt = $conn->prepare("UPDATE orders SET status = 'NEW', payment_method = 'MOMO_SUCCESS' WHERE order_code = ?");
+        // Set Payment Method to MOMO_SUCCESS and status to PAID
+        $stmt = $conn->prepare("UPDATE orders SET payment_method = 'MOMO_SUCCESS', payment_status = 'PAID' WHERE order_code = ?");
         $stmt->execute([$orderCode]);
 
         header("Location: /ITS/assets/html/layout/user/payment_result.php?status=success&order_code=$orderCode&amount=$amount");

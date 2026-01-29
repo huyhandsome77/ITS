@@ -60,10 +60,12 @@ $req_start = "$start_date $start_time";
 $req_end   = "$end_date $end_time";
 
 try {
-    // 0. AUTO-CLEANUP: Cancel expired 'NEW' bookings older than 15 minutes
+    // 0. AUTO-CLEANUP: Cancel expired 'NEW' bookings older than 15 minutes (ONLY UNPAID)
     // This releases cars held by users who abandoned MoMo payment
     $conn->query("UPDATE orders SET status = 'CANCELLED', cancel_reason = 'Payment Timeout' 
-                  WHERE status = 'NEW' AND created_at < (NOW() - INTERVAL 15 MINUTE)");
+                  WHERE status = 'NEW' 
+                  AND payment_status = 'UNPAID'
+                  AND created_at < (NOW() - INTERVAL 15 MINUTE)");
 
     // 1. Get all vehicles of this 'Type' (Name/Model) at this Station
     // We match by vehicle_name (as assumed grouping key)
