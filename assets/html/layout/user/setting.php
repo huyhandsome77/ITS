@@ -851,7 +851,7 @@ if (!isset($_SESSION['user_id'])) {
 
             try {
                 const formData = new FormData();
-                formData.append('document', file);
+                formData.append('file', file);
                 formData.append('doc_type', docType);
 
                 const response = await fetch('/ITS/assets/php/user/upload_verification_docs.php', {

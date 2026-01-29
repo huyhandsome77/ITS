@@ -313,6 +313,11 @@ if (!isset($_SESSION['user_id'])) {
                                     Thuê lại
                                 </button>
                             ` : ''}
+                            ${order.status_class === 'completed' && !order.is_reviewed ? `
+                                <button onclick="openReviewModal('${order.order_code}', '${order.vehicle_name}')" class="px-6 py-2 rounded-lg font-semibold text-sm border-2 border-yellow-500 text-yellow-600 hover:bg-yellow-50 transition-all">
+                                    ⭐ Đánh giá
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -609,6 +614,104 @@ if (!isset($_SESSION['user_id'])) {
             } catch (error) {
                 console.error('Error:', error);
                 showError('Lỗi', 'Không thể tạo đơn hàng mới. Vui lòng thử lại.');
+            }
+        }
+
+        // --- REVIEW FEATURE ---
+        let currentRating = 0;
+        let currentReviewOrder = '';
+
+        function openReviewModal(orderCode, vehicleName) {
+            currentReviewOrder = orderCode;
+            currentRating = 0;
+
+            Swal.fire({
+                title: 'Đánh giá xe',
+                html: `
+                    <div class="mb-4">
+                        <p class="text-gray-600 mb-2">Bạn cảm thấy thế nào về chuyến đi với <b>${vehicleName}</b>?</p>
+                        <div class="flex justify-center gap-2 mb-4" id="starRating">
+                            ${[1, 2, 3, 4, 5].map(i => `
+                                <svg onclick="setRating(${i})" class="w-10 h-10 cursor-pointer text-gray-300 hover:scale-110 transition-transform star-icon" data-value="${i}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            `).join('')}
+                        </div>
+                        <p id="ratingText" class="text-sm font-semibold h-5 mb-3 text-yellow-600"></p>
+                        <textarea id="reviewComment" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none" rows="3" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Gửi đánh giá',
+                cancelButtonText: 'Để sau',
+                confirmButtonColor: '#ca8a04',
+                didOpen: () => {
+                    // Re-bind click events if needed or they work inline
+                    window.setRating = (rating) => {
+                        currentRating = rating;
+                        const stars = document.querySelectorAll('.star-icon');
+                        const texts = ['', 'Tệ', 'Không hài lòng', 'Bình thường', 'Hài lòng', 'Tuyệt vời'];
+                        
+                        stars.forEach((star, index) => {
+                            if (index < rating) {
+                                star.classList.remove('text-gray-300');
+                                star.classList.add('text-yellow-400');
+                            } else {
+                                star.classList.remove('text-yellow-400');
+                                star.classList.add('text-gray-300');
+                            }
+                        });
+                        document.getElementById('ratingText').textContent = texts[rating];
+                    };
+                },
+                preConfirm: () => {
+                    const comment = document.getElementById('reviewComment').value;
+                    if (currentRating === 0) {
+                        Swal.showValidationMessage('Vui lòng chọn số sao');
+                        return false;
+                    }
+                    if (!comment.trim()) {
+                        Swal.showValidationMessage('Vui lòng nhập nội dung đánh giá');
+                        return false;
+                    }
+                    return { rating: currentRating, comment: comment };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    submitReview(result.value);
+                }
+            });
+        }
+
+        async function submitReview(data) {
+            try {
+                const response = await fetch('/ITS/assets/php/user/submit_review.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_code: currentReviewOrder,
+                        rating: data.rating,
+                        comment: data.comment
+                    })
+                });
+
+                const res = await response.json();
+
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã gửi đánh giá!',
+                        text: res.message,
+                        confirmButtonColor: '#ca8a04'
+                    }).then(() => {
+                        loadOrders(); // Reload to hide the button
+                    });
+                } else {
+                    Swal.fire('Lỗi', res.message, 'error');
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Lỗi', 'Không thể gửi đánh giá', 'error');
             }
         }
 

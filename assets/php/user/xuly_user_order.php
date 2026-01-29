@@ -119,7 +119,8 @@ $sql = "
         v.brand,
         v.model,
         v.license_plate,
-        DATEDIFF(o.end_date, o.start_date) + 1 as rental_days
+        DATEDIFF(o.end_date, o.start_date) + 1 as rental_days,
+        (SELECT COUNT(*) FROM reviews r WHERE r.order_id = o.order_id) > 0 as is_reviewed
     FROM orders o
     JOIN stations s ON o.station_id = s.station_id
     JOIN vehicles v ON o.vehicle_id = v.vehicle_id
