@@ -27,7 +27,8 @@ $baseUrl = '../../../..';
         <?php include '../../../includes/dispatcher/dispatcher_sidebar.php'; ?>
 
         <!-- CONTENT -->
-        <div id="contentWrapper" class="flex-1 flex flex-col min-h-screen transition-all duration-300">
+        <div id="contentWrapper" class="flex-1 flex flex-col min-h-screen
+                ml-64 lg:ml-72 transition-all duration-300">
 
             <!-- NAVBAR -->
             <?php include '../../../includes/navbar.php'; ?>
@@ -37,11 +38,11 @@ $baseUrl = '../../../..';
 
                 <!-- HEADER -->
                 <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-green-600 mb-2">
-                        🏢 Trạm Nguyễn Huệ
+                    <h2 id="stationName" class="text-3xl font-bold text-green-600 mb-2">
+                        Loading...
                     </h2>
-                    <p class="text-gray-600">
-                        Quận 1, TP.HCM
+                    <p id="stationAddress" class="text-gray-600">
+                        ...
                     </p>
                 </div>
 
@@ -51,21 +52,21 @@ $baseUrl = '../../../..';
                     <!-- Ô tô -->
                     <div class="bg-white rounded-2xl shadow p-6 border-l-4 border-blue-500">
                         <p class="text-sm text-gray-500 mb-1">🚗 Ô tô</p>
-                        <p class="text-3xl font-bold text-blue-600">8 xe</p>
+                        <p id="carCount" class="text-3xl font-bold text-blue-600">-</p>
                     </div>
 
                     <!-- Xe máy -->
                     <div class="bg-white rounded-2xl shadow p-6 border-l-4 border-green-500">
                         <p class="text-sm text-gray-500 mb-1">🛵 Xe máy</p>
-                        <p class="text-3xl font-bold text-green-600">12 xe</p>
+                        <p id="bikeCount" class="text-3xl font-bold text-green-600">-</p>
                     </div>
 
                     <!-- Tình trạng -->
-                    <div class="bg-white rounded-2xl shadow p-6 border-l-4 border-emerald-500">
+                    <div class="bg-white rounded-2xl shadow p-6 border-l-4 border-green-500">
                         <p class="text-sm text-gray-500 mb-1">Tình trạng</p>
-                        <span class="inline-block mt-2 px-4 py-1 rounded-full
-                                 bg-emerald-100 text-emerald-700 font-semibold text-sm">
-                            Hoạt động tốt
+                        <span id="stationStatus" class="inline-block mt-2 px-4 py-1 rounded-full
+                                 bg-green-100 text-green-700 font-semibold text-sm">
+                            ...
                         </span>
                     </div>
 
@@ -80,46 +81,22 @@ $baseUrl = '../../../..';
                         </h3>
                     </div>
 
-                    <table class="w-full text-sm">
-                        <thead class="bg-slate-100 text-slate-600">
-                            <tr>
-                                <th class="px-4 py-3 text-left">#</th>
-                                <th class="px-4 py-3 text-left">Tên xe</th>
-                                <th class="px-4 py-3 text-left">Loại</th>
-                                <th class="px-4 py-3 text-left">Biển số</th>
-                                <th class="px-4 py-3 text-left">Trạng thái</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y">
-
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-4 py-3">1</td>
-                                <td class="px-4 py-3 font-medium">Toyota Vios</td>
-                                <td class="px-4 py-3">🚗 Ô tô</td>
-                                <td class="px-4 py-3">51A-123.45</td>
-                                <td class="px-4 py-3">
-                                    <span class="px-3 py-1 rounded-full text-xs
-                                             bg-green-100 text-green-700">
-                                        Sẵn sàng
-                                    </span>
-                                </td>
-                            </tr>
-
-                            <tr class="hover:bg-slate-50">
-                                <td class="px-4 py-3">2</td>
-                                <td class="px-4 py-3 font-medium">Honda Vision</td>
-                                <td class="px-4 py-3">🛵 Xe máy</td>
-                                <td class="px-4 py-3">59B1-456.78</td>
-                                <td class="px-4 py-3">
-                                    <span class="px-3 py-1 rounded-full text-xs
-                                             bg-yellow-100 text-yellow-700">
-                                        Đang thuê
-                                    </span>
-                                </td>
-                            </tr>
-
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-100 text-slate-600">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">#</th>
+                                    <th class="px-4 py-3 text-left">Tên xe</th>
+                                    <th class="px-4 py-3 text-left">Loại</th>
+                                    <th class="px-4 py-3 text-left">Biển số</th>
+                                    <th class="px-4 py-3 text-left">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vehicleTableBody" class="divide-y">
+                                <!-- Dynamic Content -->
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
 
                 <!-- ACTIONS -->
@@ -144,6 +121,97 @@ $baseUrl = '../../../..';
 
         </div>
     </div>
+    
+    <!-- Script -->
+    <script src="../../../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const stationId = urlParams.get('id');
+
+            if (!stationId) {
+                console.warn('No station ID provided');
+                return;
+            }
+
+            fetchStationDetails(stationId);
+        });
+
+        async function fetchStationDetails(id) {
+            try {
+                const response = await fetch(`/ITS/assets/php/dispatcher/get_station_detail.php?station_id=${id}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderStationInfo(data);
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderStationInfo(data) {
+            // Header
+            document.getElementById('stationName').innerText = '🏢 ' + data.station.name;
+            document.getElementById('stationAddress').innerText = data.station.address;
+
+            // Stats
+            document.getElementById('carCount').innerText = data.stats.car_count + ' xe';
+            document.getElementById('bikeCount').innerText = data.stats.bike_count + ' xe';
+            
+            // Status
+            const statusBadge = document.getElementById('stationStatus');
+            if(data.station.status === 'ACTIVE') {
+                statusBadge.className = 'inline-block mt-2 px-4 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm';
+                statusBadge.innerText = 'Hoạt động tốt';
+            } else {
+                statusBadge.className = 'inline-block mt-2 px-4 py-1 rounded-full bg-red-100 text-red-700 font-semibold text-sm';
+                statusBadge.innerText = 'Đang bảo trì';
+            }
+
+            // Table
+            const tbody = document.getElementById('vehicleTableBody');
+            tbody.innerHTML = '';
+            
+            if (data.vehicles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Chưa có xe nào tại trạm</td></tr>';
+                return;
+            }
+
+            data.vehicles.forEach((v, index) => {
+                let statusClass = 'bg-gray-100 text-gray-600';
+                let statusText = 'Không rõ';
+
+                if (v.status === 'AVAILABLE') {
+                    statusClass = 'bg-green-100 text-green-700';
+                    statusText = 'Sẵn sàng';
+                } else if (v.status === 'RENTED') {
+                    statusClass = 'bg-yellow-100 text-yellow-700';
+                    statusText = 'Đang thuê';
+                } else if (v.status === 'MAINTENANCE') {
+                    statusClass = 'bg-red-100 text-red-700';
+                    statusText = 'Bảo trì';
+                }
+
+                const row = `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">${index + 1}</td>
+                        <td class="px-4 py-3 font-medium">${v.vehicle_name}</td>
+                        <td class="px-4 py-3">${v.vehicle_type === 'Oto' ? '🚗 Ô tô' : '🛵 Xe máy'}</td>
+                        <td class="px-4 py-3">${v.license_plate}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+    </script>
 </body>
 
 </html>
