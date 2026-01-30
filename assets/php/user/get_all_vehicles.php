@@ -6,26 +6,27 @@ header('Content-Type: application/json');
 try {
     // Fetch all available vehicles from the database
     $sql = "SELECT 
-                v.vehicle_id,
-                v.vehicle_name,
-                v.license_plate,
-                v.vehicle_type,
-                v.brand,
+                MAX(v.vehicle_id) as vehicle_id,
+                MAX(v.vehicle_name) as vehicle_name,
+                -- license_plate removed as requested (generic display)
+                MAX(v.vehicle_type) as vehicle_type,
+                MAX(v.brand) as brand,
                 v.model,
-                v.year,
-                v.seats,
-                v.price_per_day,
-                v.price_per_hour,
-                v.description,
-                v.image,
-                v.status,
-                s.station_name,
-                s.city,
-                s.district
+                MAX(v.year) as year,
+                MAX(v.seats) as seats,
+                MIN(v.price_per_day) as price_per_day,
+                MIN(v.price_per_hour) as price_per_hour,
+                MAX(v.description) as description,
+                MAX(v.image) as image,
+                MAX(v.status) as status,
+                MAX(s.station_name) as station_name,
+                MAX(s.city) as city,
+                MAX(s.district) as district
             FROM vehicles v
             LEFT JOIN stations s ON v.station_id = s.station_id
-            WHERE v.status = 'AVAILABLE'
-            ORDER BY v.vehicle_type, v.price_per_day DESC";
+            WHERE v.status != 'MAINTENANCE'
+            GROUP BY v.model
+            ORDER BY vehicle_type DESC, price_per_day ASC";
     
     $stmt = $conn->prepare($sql);
     $stmt->execute();

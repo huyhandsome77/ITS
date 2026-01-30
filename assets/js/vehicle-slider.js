@@ -104,7 +104,6 @@
                         <div class="flex items-center gap-2 mb-4 flex-wrap">
                             ${getVehicleTypeBadge(vehicle.vehicle_type)}
                             <span class="text-xs bg-purple-50 text-purple-600 px-2 py-1 rounded">${vehicle.seats} chỗ</span>
-                            <span class="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded">${vehicle.license_plate}</span>
                         </div>
                         <div class="flex items-center justify-between">
                             <div>
