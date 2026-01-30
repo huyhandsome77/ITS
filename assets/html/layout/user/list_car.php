@@ -563,11 +563,7 @@
                                 </div>
                             </div>
 
-                            <!-- FIND BUTTON -->
-                            <button type="button" onclick="findCars()" 
-                                class="w-full py-2 rounded-lg bg-black text-white font-medium hover:opacity-80">
-                                🔍 Tìm xe trống
-                            </button>
+                            
 
                             <!-- RESULTS TABLE -->
                             <div id="resultSection" class="hidden">
@@ -591,7 +587,11 @@
                                 <p class="text-sm text-slate-500">Tạm tính</p>
                                 <p id="totalDisplay" class="text-2xl font-bold">0đ</p>
                             </div>
-
+                            <!-- FIND BUTTON -->
+                            <button type="button" onclick="findCars()" 
+                                class="w-full py-2 rounded-lg bg-green-600 text-white font-medium hover:opacity-80">
+                                🔍 Tìm xe trống
+                            </button>
                             <!-- PAYMENT METHOD -->
                             <div class="space-y-3">
                                 <p class="font-semibold text-gray-700">Phương thức thanh toán</p>

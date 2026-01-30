@@ -28,7 +28,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800 mb-2">Thanh toán thành công!</h1>
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Đặt xe thành công!</h1>
                 <p class="text-gray-600 mb-6">Cảm ơn bạn đã đặt xe. Đơn hàng của bạn đã được xác nhận.</p>
             <?php else: ?>
                 <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
