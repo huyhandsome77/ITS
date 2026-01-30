@@ -101,12 +101,20 @@ try {
     }
     
     // Default redirect based on role
-    if ($user['role'] === 'ADMIN') {
-        header('Location: ../../../public/index.php?page=admin_dashboard');
-    } elseif ($user['role'] === 'OWNER') {
-        header('Location: ../../../public/index.php?page=owner_dashboard');
-    } else {
-        header('Location: ../../../public/index.php');
+    switch ($user['role']) {
+        case 'ADMIN':
+            header('Location: /ITS/assets/html/layout/admin/dashboard.php');
+            break;
+        case 'DISPATCHER':
+            header('Location: /ITS/assets/html/layout/dispatcher/station_traffic.php');
+            break;
+        case 'STATION':
+            header('Location: /ITS/assets/html/layout/station/manage_orders.php');
+            break;
+        case 'USER':
+        default:
+            header('Location: /ITS/public/index.php');
+            break;
     }
     exit();
     
