@@ -61,7 +61,7 @@ $baseUrl = '../../../..';
                 </div>
 
                 <!-- ===== DASHBOARD OVERVIEW ===== -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 animate-fadeInUp">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-fadeInUp">
 
                     <!-- ===== TOTAL STATIONS ===== -->
                     <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-1 border border-slate-100">
@@ -75,12 +75,23 @@ $baseUrl = '../../../..';
                                     🏢
                                 </div>
                             </div>
-                            <div>
-                                <a href="#stationTableBody" class="inline-flex items-center text-sm font-semibold text-blue-600 group-hover:text-blue-700 transition-colors">
-                                    Xem chi tiết
-                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </a>
+                            <p class="text-xs text-slate-500" id="statBalanced">- trạm cân bằng</p>
+                        </div>
+                    </div>
+
+                    <!-- ===== AVG LOAD FACTOR ===== -->
+                    <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 p-1 border border-slate-100">
+                        <div class="p-6 h-full flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-400 uppercase tracking-wilder mb-1">Load Factor TB</p>
+                                    <h3 id="statAvgLF" class="text-4xl font-extrabold text-green-600">-</h3>
+                                </div>
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 text-white flex items-center justify-center text-xl shadow-lg shadow-green-200">
+                                    ⚖️
+                                </div>
                             </div>
+                            <p class="text-xs text-slate-500">Mục tiêu: 0.6 - 1.5</p>
                         </div>
                     </div>
 
@@ -96,13 +107,7 @@ $baseUrl = '../../../..';
                                     📉
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-medium px-2 py-1 bg-red-50 text-red-600 rounded">Cần bổ sung ngay</span>
-                                <a href="#stationTableBody" class="inline-flex items-center text-sm font-semibold text-red-600 group-hover:text-red-700 transition-colors">
-                                    Xem danh sách
-                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </a>
-                            </div>
+                            <span class="text-xs font-medium px-2 py-1 bg-red-50 text-red-600 rounded">Cần bổ sung ngay</span>
                         </div>
                     </div>
 
@@ -118,13 +123,7 @@ $baseUrl = '../../../..';
                                     📦
                                 </div>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-medium px-2 py-1 bg-yellow-50 text-yellow-600 rounded">Sẵn sàng điều chuyển</span>
-                                <a href="#stationTableBody" class="inline-flex items-center text-sm font-semibold text-yellow-600 group-hover:text-yellow-700 transition-colors">
-                                    Xem danh sách
-                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </a>
-                            </div>
+                            <span class="text-xs font-medium px-2 py-1 bg-yellow-50 text-yellow-600 rounded">Sẵn sàng điều chuyển</span>
                         </div>
                     </div>
 
@@ -133,28 +132,51 @@ $baseUrl = '../../../..';
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     <!-- ===== TABLE STATIONS (Left - 2 Cols) ===== -->
-                    <div class="lg:col-span-2 animate-fadeInUp delay-100">
-                        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full flex flex-col">
+                    <div class="lg:col-span-2 space-y-6">
+                        
+                        <!-- SMART SUGGESTIONS -->
+                        <section id="suggestionsSection" class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-sm border border-indigo-100 overflow-hidden animate-fadeInUp">
+                            <div class="p-6 border-b border-indigo-100 bg-white/50 flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        🤖 Gợi ý thông minh
+                                        <span id="suggestionBadge" class="px-2 py-0.5 bg-indigo-600 text-white text-xs rounded-full">0</span>
+                                    </h3>
+                                    <p class="text-xs text-slate-500 mt-1">Dựa trên Load Factor & dự đoán nhu cầu</p>
+                                </div>
+                                <button onclick="executeAutoRebalance()" id="autoRebalanceBtn" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold rounded-xl hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Tự động cân bằng
+                                </button>
+                            </div>
+                            <div id="suggestionsList" class="p-4 max-h-96 overflow-y-auto">
+                                <p class="text-center text-slate-400 py-8">Đang tải gợi ý...</p>
+                            </div>
+                        </section>
+
+                        <!-- STATIONS TABLE -->
+                        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fadeInUp delay-100">
                             <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                 <div>
                                     <h3 class="text-lg font-bold text-slate-800">📍 Danh sách trạm</h3>
                                     <div class="flex gap-2 text-xs font-medium text-slate-500 mt-1">
                                         <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded">Live Data</span>
+                                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">Load Factor</span>
                                     </div>
                                 </div>
-                                <button onclick="loadStationTraffic()" class="p-2 hover:bg-white rounded-lg transition text-slate-500 hover:text-blue-600 hover:shadow-sm">
+                                <button onclick="loadSmartRebalancing()" class="p-2 hover:bg-white rounded-lg transition text-slate-500 hover:text-blue-600 hover:shadow-sm">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 </button>
                             </div>
         
-                            <div class="overflow-x-auto flex-1">
+                            <div class="overflow-x-auto">
                                 <table class="w-full text-sm text-left">
                                     <thead class="bg-slate-50 text-slate-500 font-medium uppercase text-xs tracking-wider">
                                         <tr class="border-b border-slate-200">
                                             <th class="px-6 py-4">Trạm Xe</th>
-                                            <th class="px-6 py-4">Khu vực</th>
                                             <th class="px-6 py-4 text-center">🚗 Ô tô</th>
                                             <th class="px-6 py-4 text-center">🛵 Xe máy</th>
+                                            <th class="px-6 py-4 text-center">Load Factor</th>
                                             <th class="px-6 py-4 text-center">Trạng thái</th>
                                         </tr>
                                     </thead>
@@ -247,34 +269,96 @@ $baseUrl = '../../../..';
 
     <script>
         let stationsData = [];
+        let suggestionsData = [];
+        let smartData = null;
 
         // Load data on page load
         document.addEventListener('DOMContentLoaded', () => {
-            loadStationTraffic();
+            loadSmartRebalancing();
         });
 
-        async function loadStationTraffic() {
+        async function loadSmartRebalancing() {
             try {
-                const response = await fetch('/ITS/assets/php/dispatcher/get_station_traffic.php');
+                const response = await fetch('/ITS/assets/php/dispatcher/get_smart_rebalancing.php');
                 const result = await response.json();
 
                 if (result.success) {
+                    smartData = result;
                     stationsData = result.stations;
+                    suggestionsData = result.suggestions;
+                    
                     updateDashboard(result.stats);
                     renderTable(result.stations);
+                    renderSuggestions(result.suggestions);
                     populateSelects(result.stations);
                 } else {
                     console.error(result.message);
+                    Swal.fire('Lỗi', result.message, 'error');
                 }
             } catch (error) {
-                console.error('Error fetching traffic data:', error);
+                console.error('Error fetching smart data:', error);
+                Swal.fire('Lỗi', 'Không thể tải dữ liệu', 'error');
             }
         }
 
         function updateDashboard(stats) {
             document.getElementById('statTotal').innerText = stats.total_stations;
-            document.getElementById('statLow').innerText = stats.low_stock;
-            document.getElementById('statOver').innerText = stats.over_stock;
+            document.getElementById('statBalanced').innerText = stats.balanced_stations + ' trạm cân bằng';
+            document.getElementById('statAvgLF').innerText = stats.avg_load_factor;
+            document.getElementById('statLow').innerText = stats.low_stations;
+            document.getElementById('statOver').innerText = stats.over_stations;
+            document.getElementById('suggestionBadge').innerText = stats.total_suggestions;
+            
+            // Enable/disable auto-rebalance button
+            const autoBtn = document.getElementById('autoRebalanceBtn');
+            if (stats.total_suggestions > 0) {
+                autoBtn.disabled = false;
+            } else {
+                autoBtn.disabled = true;
+            }
+        }
+
+        function renderSuggestions(suggestions) {
+            const container = document.getElementById('suggestionsList');
+            
+            if (suggestions.length === 0) {
+                container.innerHTML = '<p class="text-center text-green-600 py-8 font-semibold">✅ Hệ thống đã cân bằng! Không cần điều chuyển.</p>';
+                return;
+            }
+            
+            let html = '';
+            suggestions.forEach((sug, index) => {
+                const priorityColor = sug.priority === 'HIGH' ? 'red' : 'orange';
+                const priorityText = sug.priority === 'HIGH' ? 'Khẩn cấp' : 'Ưu tiên';
+                
+                html += `
+                    <div class="bg-white rounded-xl p-4 mb-3 border border-slate-200 hover:shadow-md transition-all">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-${priorityColor}-100 text-${priorityColor}-700 text-xs font-bold rounded">${priorityText}</span>
+                                    <span class="text-xs text-slate-500">${sug.distance} km • ~${(sug.estimated_cost/1000).toFixed(0)}k VND</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                                    <span>${sug.from_station_name}</span>
+                                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    <span>${sug.to_station_name}</span>
+                                </div>
+                            </div>
+                            <button onclick="executeSingleSuggestion(${index})" class="ml-2 px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition">
+                                Thực hiện
+                            </button>
+                        </div>
+                        <div class="flex gap-4 text-xs text-slate-600">
+                            ${sug.car_quantity > 0 ? `<span>🚗 ${sug.car_quantity} ô tô</span>` : ''}
+                            ${sug.bike_quantity > 0 ? `<span>🛵 ${sug.bike_quantity} xe máy</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">${sug.reason}</p>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
         }
 
         function renderTable(stations) {
@@ -283,24 +367,36 @@ $baseUrl = '../../../..';
 
             stations.forEach(s => {
                 let statusBadge = '';
+                let lfColor = 'green';
+                
                 if(s.status === 'LOW') {
-                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Thiếu xe</span>`;
+                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">⚠️ Thiếu xe</span>`;
+                    lfColor = 'red';
                 } else if(s.status === 'OVER') {
-                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">Dư xe</span>`;
+                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700">📦 Dư xe</span>`;
+                    lfColor = 'yellow';
                 } else {
-                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">Bình thường</span>`;
+                    statusBadge = `<span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">✅ Cân bằng</span>`;
                 }
 
                 const row = `
                     <tr class="border-b border-slate-100 hover:bg-slate-50 transition text-black bg-white">
-                        <td class="p-4 font-semibold">
-                            <a href="station_detail.php?id=${s.station_id}" class="text-blue-700 hover:underline">
-                                ${s.station_name}
-                            </a>
+                        <td class="p-4">
+                            <div class="font-semibold text-blue-700">${s.station_name}</div>
+                            <div class="text-xs text-slate-500">${s.location}</div>
                         </td>
-                        <td class="p-4 text-gray-800">${s.municipality}</td>
-                        <td class="p-4 text-center font-bold text-black">${s.car_count}</td>
-                        <td class="p-4 text-center font-bold text-black">${s.bike_count}</td>
+                        <td class="p-4 text-center">
+                            <div class="font-bold text-black">${s.car_count}</div>
+                            <div class="text-xs text-slate-500">Dự đoán: ${s.predicted_car_demand}</div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="font-bold text-black">${s.bike_count}</div>
+                            <div class="text-xs text-slate-500">Dự đoán: ${s.predicted_bike_demand}</div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <div class="font-bold text-${lfColor}-700">${s.avg_load_factor}</div>
+                            <div class="text-xs text-slate-500">LF: ${s.car_load_factor} / ${s.bike_load_factor}</div>
+                        </td>
                         <td class="p-4 text-center">${statusBadge}</td>
                     </tr>
                 `;
@@ -312,7 +408,6 @@ $baseUrl = '../../../..';
             const fromSelect = document.getElementById('fromStation');
             const toSelect = document.getElementById('toStation');
             
-            // Save current selection if re-populating
             const currentFrom = fromSelect.value;
             const currentTo = toSelect.value;
 
@@ -320,12 +415,115 @@ $baseUrl = '../../../..';
             toSelect.innerHTML = '<option value="">-- Chọn trạm nhận --</option>';
 
             stations.forEach(s => {
-                fromSelect.innerHTML += `<option value="${s.station_id}">${s.station_name} (Hiện có: ${s.total_vehicles})</option>`;
+                fromSelect.innerHTML += `<option value="${s.station_id}">${s.station_name} (LF: ${s.avg_load_factor})</option>`;
                 toSelect.innerHTML += `<option value="${s.station_id}">${s.station_name}</option>`;
             });
 
             fromSelect.value = currentFrom;
             toSelect.value = currentTo;
+        }
+
+        async function executeSingleSuggestion(index) {
+            const suggestion = suggestionsData[index];
+            
+            const result = await Swal.fire({
+                title: 'Xác nhận điều chuyển',
+                html: `
+                    <div class="text-left space-y-2">
+                        <p><b>Từ:</b> ${suggestion.from_station_name}</p>
+                        <p><b>Đến:</b> ${suggestion.to_station_name}</p>
+                        <p><b>Số xe:</b> ${suggestion.car_quantity} ô tô, ${suggestion.bike_quantity} xe máy</p>
+                        <p><b>Chi phí dự kiến:</b> ${(suggestion.estimated_cost/1000).toFixed(0)}k VND</p>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#059669'
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
+                
+                try {
+                    const response = await fetch('/ITS/assets/php/dispatcher/auto_rebalance.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ suggestions: [suggestion] })
+                    });
+                    
+                    const res = await response.json();
+                    
+                    if (res.success) {
+                        Swal.fire('Thành công!', res.message, 'success');
+                        loadSmartRebalancing(); // Reload
+                    } else {
+                        Swal.fire('Thất bại', res.message, 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Lỗi', 'Không thể kết nối server', 'error');
+                }
+            }
+        }
+
+        async function executeAutoRebalance() {
+            if (suggestionsData.length === 0) {
+                Swal.fire('Thông báo', 'Không có gợi ý nào để thực hiện', 'info');
+                return;
+            }
+            
+            const result = await Swal.fire({
+                title: '🤖 Tự động cân bằng',
+                html: `
+                    <div class="text-left">
+                        <p class="mb-2">Hệ thống sẽ tự động thực hiện <b>${suggestionsData.length} gợi ý</b>:</p>
+                        <ul class="list-disc pl-6 text-sm space-y-1">
+                            ${suggestionsData.slice(0, 3).map(s => 
+                                `<li>${s.from_station_name} → ${s.to_station_name} (${s.car_quantity + s.bike_quantity} xe)</li>`
+                            ).join('')}
+                            ${suggestionsData.length > 3 ? `<li class="text-slate-500">... và ${suggestionsData.length - 3} gợi ý khác</li>` : ''}
+                        </ul>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Thực hiện tất cả',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#059669'
+            });
+
+            if (result.isConfirmed) {
+                Swal.fire({ 
+                    title: 'Đang cân bằng hệ thống...', 
+                    html: 'Vui lòng đợi trong giây lát',
+                    didOpen: () => Swal.showLoading() 
+                });
+                
+                try {
+                    const response = await fetch('/ITS/assets/php/dispatcher/auto_rebalance.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ suggestions: suggestionsData })
+                    });
+                    
+                    const res = await response.json();
+                    
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'Hoàn thành!',
+                            html: `Đã điều chuyển thành công <b>${res.success_count}</b> gợi ý`,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        loadSmartRebalancing(); // Reload
+                    } else {
+                        Swal.fire('Thất bại', res.message, 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Lỗi', 'Không thể kết nối server', 'error');
+                }
+            }
         }
 
         function updateMaxQuantity() {
@@ -363,7 +561,7 @@ $baseUrl = '../../../..';
             const qty = document.getElementById('quantity').value;
             
             const fromName = document.getElementById('fromStation').options[document.getElementById('fromStation').selectedIndex].text.split('(')[0].trim();
-            const toName = document.getElementById('toStation').options[document.getElementById('toStation').selectedIndex].text;
+            const toName = document.getElementById('toStation').options[document.getElementById('toStation').selectedIndex].text.split('(')[0].trim();
 
             if (fromId === toId) {
                 Swal.fire('Lỗi', 'Trạm nguồn và đích không được trùng nhau', 'error');
@@ -377,7 +575,7 @@ $baseUrl = '../../../..';
                 showCancelButton: true,
                 confirmButtonText: 'Đồng ý',
                 cancelButtonText: 'Hủy',
-                confirmButtonColor: '#059669' // Green-600
+                confirmButtonColor: '#059669'
             });
 
             if (result.isConfirmed) {
@@ -399,7 +597,7 @@ $baseUrl = '../../../..';
                     
                     if (res.success) {
                         Swal.fire('Thành công', res.message, 'success');
-                        loadStationTraffic(); // Reload data
+                        loadSmartRebalancing(); // Reload
                         document.getElementById('dispatchForm').reset();
                         document.getElementById('maxQtyHint').innerText = '';
                     } else {
